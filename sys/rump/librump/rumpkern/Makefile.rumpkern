@@ -29,7 +29,7 @@ MAN=		rump.3 rump_lwproc.3
 SRCS+=	rump.c rumpcopy.c cons.c emul.c etfs_wrap.c intr.c	\
 	lwproc.c klock.c kobj_rename.c ltsleep.c scheduler.c	\
 	signals.c sleepq.c threads.c vm.c hyperentropy.c	\
-	accessors.c
+	accessors.c kern_malloc.c
 
 SRCS+=	rumpkern_syscalls.c
 
@@ -66,6 +66,7 @@ SRCS+=	devsw.c
 # std kernel sources
 #
 # sys/kern
+#	kern_malloc.c		
 SRCS+=	init_sysctl_base.c	\
 	kern_auth.c		\
 	kern_cfglock.c		\
@@ -74,7 +75,6 @@ SRCS+=	init_sysctl_base.c	\
 	kern_event.c		\
 	kern_hook.c		\
 	kern_ksyms.c		\
-	kern_malloc.c		\
 	kern_module.c		\
 	kern_mutex_obj.c	\
 	kern_ntptime.c		\

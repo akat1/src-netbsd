@@ -76,6 +76,10 @@ void rumpuser_free(void *, size_t);
 int rumpuser_anonmmap(void *, size_t, int, int, void **);
 void  rumpuser_unmap(void *, size_t);
 
+void *rumpuser_libc_malloc(size_t);
+void rumpuser_libc_free(void *);
+void *rumpuser_libc_realloc(void *, size_t);
+
 /*
  * files and I/O
  */

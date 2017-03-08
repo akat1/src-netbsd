@@ -109,3 +109,20 @@ rumpuser_unmap(void *addr, size_t len)
 	munmap(addr, len);
 }
 
+void *
+rumpuser_libc_malloc(size_t n)
+{
+    return malloc(n);
+}
+
+void
+rumpuser_libc_free(void *x)
+{
+    free(x);
+}
+
+void *
+rumpuser_libc_realloc(void *ptr, size_t size)
+{
+    return realloc(ptr, size);
+}
