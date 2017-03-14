@@ -116,7 +116,7 @@ rumpns_kern_malloc(unsigned long size, int flags)
         return NULL;
     }
 
-	if ((flags | M_ZERO) != 0) {
+	if ((flags & M_ZERO) != 0) {
         memset(r, 0, size);
     } else {
         memset(r, 0x41, size);
