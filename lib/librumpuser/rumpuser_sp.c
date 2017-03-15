@@ -777,8 +777,8 @@ serv_workbouncer(void *arg)
 			    (char *)sba->sba_data);
 		}
 		spcrelease(sba->sba_spc);
-		free(sba->sba_data);
-		free(sba);
+		//free(sba->sba_data);
+		//free(sba);
 	}
 
 	return NULL;
@@ -980,15 +980,20 @@ handlereq(struct spclient *spc)
 
 			/* ensure it's 0-terminated */
 			/* XXX make sure it contains sensible chars? */
-			comm[commlen] = '\0';
+			//comm[commlen] = '\0';
+			char *tmp_comm = malloc(commlen + 1);
+			memcpy(tmp_comm, comm, commlen);
+			tmp_comm[commlen] = '\0';
 
 			/* make sure we fork off of proc1 */
 			_DIAGASSERT(lwproc_curlwp() == NULL);
 
 			if ((error = lwproc_rfork(spc,
-			    RUMP_RFFD_CLEAR, comm)) != 0) {
+			    RUMP_RFFD_CLEAR, tmp_comm)) != 0) {
 				shutdown(spc->spc_fd, SHUT_RDWR);
 			}
+			
+			free(tmp_comm);
 
 			spcfreebuf(spc);
 			if (error)

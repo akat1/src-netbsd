@@ -231,7 +231,7 @@ rumpuser_mutex_destroy(struct rumpuser_mtx *mtx)
 {
 
 	NOFAIL_ERRNO(pthread_mutex_destroy(&mtx->pthmtx));
-	free(mtx);
+	//free(mtx);
 }
 
 void
@@ -464,7 +464,7 @@ rumpuser_rw_destroy(struct rumpuser_rw *rw)
 #if !defined(__APPLE__) && ! defined(__ANDROID__)
 	NOFAIL_ERRNO(pthread_spin_destroy(&rw->spin));
 #endif
-	free(rw);
+	//free(rw);
 }
 
 void

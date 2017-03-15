@@ -301,6 +301,8 @@ sendunlock(struct spclient *spc)
 	pthread_mutex_unlock(&spc->spc_mtx);
 }
 
+
+__attribute__((no_sanitize_address))
 static int
 dosend(struct spclient *spc, struct iovec *iov, size_t iovlen)
 {
