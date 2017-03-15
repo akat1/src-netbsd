@@ -57,6 +57,7 @@ __KERNEL_RCSID(0, "$NetBSD: subr_pool.c,v 1.206 2016/02/05 03:04:52 knakahara Ex
 #include <sys/atomic.h>
 
 #include <uvm/uvm_extern.h>
+#include <sys/malloc.h>
 
 /*
  * Pool resource management utility.
@@ -753,211 +754,15 @@ pool_alloc_item_header(struct pool *pp, void *storage, int flags)
 void *
 pool_get(struct pool *pp, int flags)
 {
-	struct pool_item *pi;
-	struct pool_item_header *ph;
-	void *v;
-
-#ifdef DIAGNOSTIC
-	if (pp->pr_itemsperpage == 0)
-		panic("pool_get: pool '%s': pr_itemsperpage is zero, "
-		    "pool not initialized?", pp->pr_wchan);
-	if ((cpu_intr_p() || cpu_softintr_p()) && pp->pr_ipl == IPL_NONE &&
-	    !cold && panicstr == NULL)
-		panic("pool '%s' is IPL_NONE, but called from "
-		    "interrupt context\n", pp->pr_wchan);
-#endif
-	if (flags & PR_WAITOK) {
-		ASSERT_SLEEPABLE();
-	}
-
-	mutex_enter(&pp->pr_lock);
- startover:
-	/*
-	 * Check to see if we've reached the hard limit.  If we have,
-	 * and we can wait, then wait until an item has been returned to
-	 * the pool.
-	 */
-#ifdef DIAGNOSTIC
-	if (__predict_false(pp->pr_nout > pp->pr_hardlimit)) {
-		mutex_exit(&pp->pr_lock);
-		panic("pool_get: %s: crossed hard limit", pp->pr_wchan);
-	}
-#endif
-	if (__predict_false(pp->pr_nout == pp->pr_hardlimit)) {
-		if (pp->pr_drain_hook != NULL) {
-			/*
-			 * Since the drain hook is going to free things
-			 * back to the pool, unlock, call the hook, re-lock,
-			 * and check the hardlimit condition again.
-			 */
-			mutex_exit(&pp->pr_lock);
-			(*pp->pr_drain_hook)(pp->pr_drain_hook_arg, flags);
-			mutex_enter(&pp->pr_lock);
-			if (pp->pr_nout < pp->pr_hardlimit)
-				goto startover;
-		}
-
-		if ((flags & PR_WAITOK) && !(flags & PR_LIMITFAIL)) {
-			/*
-			 * XXX: A warning isn't logged in this case.  Should
-			 * it be?
-			 */
-			pp->pr_flags |= PR_WANTED;
-			cv_wait(&pp->pr_cv, &pp->pr_lock);
-			goto startover;
-		}
-
-		/*
-		 * Log a message that the hard limit has been hit.
-		 */
-		if (pp->pr_hardlimit_warning != NULL &&
-		    ratecheck(&pp->pr_hardlimit_warning_last,
-			      &pp->pr_hardlimit_ratecap))
-			log(LOG_ERR, "%s\n", pp->pr_hardlimit_warning);
-
-		pp->pr_nfail++;
-
-		mutex_exit(&pp->pr_lock);
-		return (NULL);
-	}
-
-	/*
-	 * The convention we use is that if `curpage' is not NULL, then
-	 * it points at a non-empty bucket. In particular, `curpage'
-	 * never points at a page header which has PR_PHINPAGE set and
-	 * has no items in its bucket.
-	 */
-	if ((ph = pp->pr_curpage) == NULL) {
-		int error;
-
-#ifdef DIAGNOSTIC
-		if (pp->pr_nitems != 0) {
-			mutex_exit(&pp->pr_lock);
-			printf("pool_get: %s: curpage NULL, nitems %u\n",
-			    pp->pr_wchan, pp->pr_nitems);
-			panic("pool_get: nitems inconsistent");
-		}
-#endif
-
-		/*
-		 * Call the back-end page allocator for more memory.
-		 * Release the pool lock, as the back-end page allocator
-		 * may block.
-		 */
-		error = pool_grow(pp, flags);
-		if (error != 0) {
-			/*
-			 * We were unable to allocate a page or item
-			 * header, but we released the lock during
-			 * allocation, so perhaps items were freed
-			 * back to the pool.  Check for this case.
-			 */
-			if (pp->pr_curpage != NULL)
-				goto startover;
-
-			pp->pr_nfail++;
-			mutex_exit(&pp->pr_lock);
-			return (NULL);
-		}
-
-		/* Start the allocation process over. */
-		goto startover;
-	}
-	if (pp->pr_roflags & PR_NOTOUCH) {
-#ifdef DIAGNOSTIC
-		if (__predict_false(ph->ph_nmissing == pp->pr_itemsperpage)) {
-			mutex_exit(&pp->pr_lock);
-			panic("pool_get: %s: page empty", pp->pr_wchan);
-		}
-#endif
-		v = pr_item_notouch_get(pp, ph);
-	} else {
-		v = pi = LIST_FIRST(&ph->ph_itemlist);
-		if (__predict_false(v == NULL)) {
-			mutex_exit(&pp->pr_lock);
-			panic("pool_get: %s: page empty", pp->pr_wchan);
-		}
-#ifdef DIAGNOSTIC
-		if (__predict_false(pp->pr_nitems == 0)) {
-			mutex_exit(&pp->pr_lock);
-			printf("pool_get: %s: items on itemlist, nitems %u\n",
-			    pp->pr_wchan, pp->pr_nitems);
-			panic("pool_get: nitems inconsistent");
-		}
-#endif
-
-#ifdef DIAGNOSTIC
-		if (__predict_false(pi->pi_magic != PI_MAGIC)) {
-			panic("pool_get(%s): free list modified: "
-			    "magic=%x; page %p; item addr %p\n",
-			    pp->pr_wchan, pi->pi_magic, ph->ph_page, pi);
-		}
-#endif
-
-		/*
-		 * Remove from item list.
-		 */
-		LIST_REMOVE(pi, pi_list);
-	}
-	pp->pr_nitems--;
-	pp->pr_nout++;
-	if (ph->ph_nmissing == 0) {
-#ifdef DIAGNOSTIC
-		if (__predict_false(pp->pr_nidle == 0))
-			panic("pool_get: nidle inconsistent");
-#endif
-		pp->pr_nidle--;
-
-		/*
-		 * This page was previously empty.  Move it to the list of
-		 * partially-full pages.  This page is already curpage.
-		 */
-		LIST_REMOVE(ph, ph_pagelist);
-		LIST_INSERT_HEAD(&pp->pr_partpages, ph, ph_pagelist);
-	}
-	ph->ph_nmissing++;
-	if (ph->ph_nmissing == pp->pr_itemsperpage) {
-#ifdef DIAGNOSTIC
-		if (__predict_false((pp->pr_roflags & PR_NOTOUCH) == 0 &&
-		    !LIST_EMPTY(&ph->ph_itemlist))) {
-			mutex_exit(&pp->pr_lock);
-			panic("pool_get: %s: nmissing inconsistent",
-			    pp->pr_wchan);
-		}
-#endif
-		/*
-		 * This page is now full.  Move it to the full list
-		 * and select a new current page.
-		 */
-		LIST_REMOVE(ph, ph_pagelist);
-		LIST_INSERT_HEAD(&pp->pr_fullpages, ph, ph_pagelist);
-		pool_update_curpage(pp);
-	}
-
-	pp->pr_nget++;
-
-	/*
-	 * If we have a low water mark and we are now below that low
-	 * water mark, add more items to the pool.
-	 */
-	if (POOL_NEEDS_CATCHUP(pp) && pool_catchup(pp) != 0) {
-		/*
-		 * XXX: Should we log a warning?  Should we set up a timeout
-		 * to try again in a second or so?  The latter could break
-		 * a caller's assumptions about interrupt protection, etc.
-		 */
-	}
-
-	mutex_exit(&pp->pr_lock);
-	KASSERT((((vaddr_t)v + pp->pr_itemoffset) & (pp->pr_align - 1)) == 0);
-	FREECHECK_OUT(&pp->pr_freecheck, v);
-	pool_redzone_fill(pp, v);
-	return (v);
+	unsigned int size=pp->pr_size;
+	return kern_malloc(size,0);
 }
 
 /*
  * Internal version of pool_put().  Pool is already locked/entered.
  */
+
+__attribute__((__used__))
 static void
 pool_do_put(struct pool *pp, void *v, struct pool_pagelist *pq)
 {
@@ -1069,15 +874,7 @@ pool_do_put(struct pool *pp, void *v, struct pool_pagelist *pq)
 void
 pool_put(struct pool *pp, void *v)
 {
-	struct pool_pagelist pq;
-
-	LIST_INIT(&pq);
-
-	mutex_enter(&pp->pr_lock);
-	pool_do_put(pp, v, &pq);
-	mutex_exit(&pp->pr_lock);
-
-	pr_pagelist_free(pp, &pq);
+	kern_free(v);
 }
 
 /*
@@ -2194,8 +1991,8 @@ pool_cache_get_slow(pool_cache_cpu_t *cc, int s, void **objectp,
 		return false;
 	}
 
-	KASSERT((((vaddr_t)object + pc->pc_pool.pr_itemoffset) &
-	    (pc->pc_pool.pr_align - 1)) == 0);
+	//KASSERT((((vaddr_t)object + pc->pc_pool.pr_itemoffset) &
+	//    (pc->pc_pool.pr_align - 1)) == 0);
 
 	if (pap != NULL) {
 #ifdef POOL_VTOPHYS
