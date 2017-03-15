@@ -114,6 +114,7 @@ __KERNEL_RCSID(0, "$NetBSD: subr_kmem.c,v 1.62 2016/02/29 00:34:17 chs Exp $");
 #include <uvm/uvm_map.h>
 
 #include <lib/libkern/libkern.h>
+#include <sys/malloc.h>
 
 struct kmem_cache_info {
 	size_t		kc_size;
@@ -387,7 +388,10 @@ kmem_alloc(size_t size, km_flag_t kmflags)
 
 	KASSERTMSG((!cpu_intr_p() && !cpu_softintr_p()),
 	    "kmem(9) should not be used from the interrupt context");
-	v = kmem_intr_alloc(size, kmflags);
+
+	//v = kmem_intr_alloc(size, kmflags);
+	v=kern_malloc(size, 0);
+
 	KASSERT(v || (kmflags & KM_NOSLEEP) != 0);
 	return v;
 }
@@ -404,7 +408,11 @@ kmem_zalloc(size_t size, km_flag_t kmflags)
 
 	KASSERTMSG((!cpu_intr_p() && !cpu_softintr_p()),
 	    "kmem(9) should not be used from the interrupt context");
-	v = kmem_intr_zalloc(size, kmflags);
+
+	//v = kmem_intr_zalloc(size, kmflags);
+	v=kern_malloc(size, 0);
+	memset(v,0,size);
+
 	KASSERT(v || (kmflags & KM_NOSLEEP) != 0);
 	return v;
 }
@@ -419,7 +427,9 @@ kmem_free(void *p, size_t size)
 {
 	KASSERT(!cpu_intr_p());
 	KASSERT(!cpu_softintr_p());
-	kmem_intr_free(p, size);
+
+	//kmem_intr_free(p, size);
+	kern_free(p);
 }
 
 static size_t
