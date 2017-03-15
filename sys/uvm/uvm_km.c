@@ -384,50 +384,10 @@ uvm_km_suballoc(struct vm_map *map, vaddr_t *vmin /* IN/OUT */,
     vaddr_t *vmax /* OUT */, vsize_t size, int flags, bool fixed,
     struct vm_map *submap)
 {
-	int mapflags = UVM_FLAG_NOMERGE | (fixed ? UVM_FLAG_FIXED : 0);
-	UVMHIST_FUNC(__func__); UVMHIST_CALLED(maphist);
-
-	KASSERT(vm_map_pmap(map) == pmap_kernel());
-
-	size = round_page(size);	/* round up to pagesize */
-
-	/*
-	 * first allocate a blank spot in the parent map
-	 */
-
-	if (uvm_map(map, vmin, size, NULL, UVM_UNKNOWN_OFFSET, 0,
-	    UVM_MAPFLAG(UVM_PROT_ALL, UVM_PROT_ALL, UVM_INH_NONE,
-	    UVM_ADV_RANDOM, mapflags)) != 0) {
-		panic("%s: unable to allocate space in parent map", __func__);
-	}
-
-	/*
-	 * set VM bounds (vmin is filled in by uvm_map)
-	 */
-
-	*vmax = *vmin + size;
-
-	/*
-	 * add references to pmap and create or init the submap
-	 */
-
-	pmap_reference(vm_map_pmap(map));
-	if (submap == NULL) {
-		submap = kmem_alloc(sizeof(*submap), KM_SLEEP);
-		if (submap == NULL)
-			panic("uvm_km_suballoc: unable to create submap");
-	}
-	uvm_map_setup(submap, *vmin, *vmax, flags);
-	submap->pmap = vm_map_pmap(map);
-
-	/*
-	 * now let uvm_map_submap plug in it...
-	 */
-
-	if (uvm_map_submap(map, *vmin, *vmax, submap) != 0)
-		panic("uvm_km_suballoc: submap allocation failed");
-
-	return(submap);
+	void *ptr=kern_malloc(size, 0);
+	if (flags & UVM_KMF_ZERO)
+	  memset(ptr,0,size);
+	return ptr;
 }
 
 /*
@@ -587,125 +547,10 @@ uvm_km_check_empty(struct vm_map *map, vaddr_t start, vaddr_t end)
 vaddr_t
 uvm_km_alloc(struct vm_map *map, vsize_t size, vsize_t align, uvm_flag_t flags)
 {
-	vaddr_t kva, loopva;
-	vaddr_t offset;
-	vsize_t loopsize;
-	struct vm_page *pg;
-	struct uvm_object *obj;
-	int pgaflags;
-	vm_prot_t prot, vaprot;
-	UVMHIST_FUNC(__func__); UVMHIST_CALLED(maphist);
-
-	KASSERT(vm_map_pmap(map) == pmap_kernel());
-	KASSERT((flags & UVM_KMF_TYPEMASK) == UVM_KMF_WIRED ||
-		(flags & UVM_KMF_TYPEMASK) == UVM_KMF_PAGEABLE ||
-		(flags & UVM_KMF_TYPEMASK) == UVM_KMF_VAONLY);
-	KASSERT((flags & UVM_KMF_VAONLY) != 0 || (flags & UVM_KMF_COLORMATCH) == 0);
-	KASSERT((flags & UVM_KMF_COLORMATCH) == 0 || (flags & UVM_KMF_VAONLY) != 0);
-
-	/*
-	 * setup for call
-	 */
-
-	kva = vm_map_min(map);	/* hint */
-	size = round_page(size);
-	obj = (flags & UVM_KMF_PAGEABLE) ? uvm_kernel_object : NULL;
-	UVMHIST_LOG(maphist,"  (map=0x%x, obj=0x%x, size=0x%x, flags=%d)",
-		    map, obj, size, flags);
-
-	/*
-	 * allocate some virtual space
-	 */
-
-	vaprot = (flags & UVM_KMF_EXEC) ? UVM_PROT_ALL : UVM_PROT_RW;
-	if (__predict_false(uvm_map(map, &kva, size, obj, UVM_UNKNOWN_OFFSET,
-	    align, UVM_MAPFLAG(vaprot, UVM_PROT_ALL, UVM_INH_NONE,
-	    UVM_ADV_RANDOM,
-	    (flags & (UVM_KMF_TRYLOCK | UVM_KMF_NOWAIT | UVM_KMF_WAITVA
-	     | UVM_KMF_COLORMATCH)))) != 0)) {
-		UVMHIST_LOG(maphist, "<- done (no VM)",0,0,0,0);
-		return(0);
-	}
-
-	/*
-	 * if all we wanted was VA, return now
-	 */
-
-	if (flags & (UVM_KMF_VAONLY | UVM_KMF_PAGEABLE)) {
-		UVMHIST_LOG(maphist,"<- done valloc (kva=0x%x)", kva,0,0,0);
-		return(kva);
-	}
-
-	/*
-	 * recover object offset from virtual address
-	 */
-
-	offset = kva - vm_map_min(kernel_map);
-	UVMHIST_LOG(maphist, "  kva=0x%x, offset=0x%x", kva, offset,0,0);
-
-	/*
-	 * now allocate and map in the memory... note that we are the only ones
-	 * whom should ever get a handle on this area of VM.
-	 */
-
-	loopva = kva;
-	loopsize = size;
-
-	pgaflags = UVM_FLAG_COLORMATCH;
-	if (flags & UVM_KMF_NOWAIT)
-		pgaflags |= UVM_PGA_USERESERVE;
+	void *ptr=kern_malloc(size, 0);
 	if (flags & UVM_KMF_ZERO)
-		pgaflags |= UVM_PGA_ZERO;
-	prot = VM_PROT_READ | VM_PROT_WRITE;
-	if (flags & UVM_KMF_EXEC)
-		prot |= VM_PROT_EXECUTE;
-	while (loopsize) {
-		KASSERTMSG(!pmap_extract(pmap_kernel(), loopva, NULL),
-		    "loopva=%#"PRIxVADDR, loopva);
-
-		pg = uvm_pagealloc_strat(NULL, offset, NULL, pgaflags,
-#ifdef UVM_KM_VMFREELIST
-		   UVM_PGA_STRAT_ONLY, UVM_KM_VMFREELIST
-#else
-		   UVM_PGA_STRAT_NORMAL, 0
-#endif
-		   );
-
-		/*
-		 * out of memory?
-		 */
-
-		if (__predict_false(pg == NULL)) {
-			if ((flags & UVM_KMF_NOWAIT) ||
-			    ((flags & UVM_KMF_CANFAIL) && !uvm_reclaimable())) {
-				/* free everything! */
-				uvm_km_free(map, kva, size,
-				    flags & UVM_KMF_TYPEMASK);
-				return (0);
-			} else {
-				uvm_wait("km_getwait2");	/* sleep here */
-				continue;
-			}
-		}
-
-		pg->flags &= ~PG_BUSY;	/* new page */
-		UVM_PAGE_OWN(pg, NULL);
-
-		/*
-		 * map it in
-		 */
-
-		pmap_kenter_pa(loopva, VM_PAGE_TO_PHYS(pg),
-		    prot, PMAP_KMPAGE);
-		loopva += PAGE_SIZE;
-		offset += PAGE_SIZE;
-		loopsize -= PAGE_SIZE;
-	}
-
-	pmap_update(pmap_kernel());
-
-	UVMHIST_LOG(maphist,"<- done (kva=0x%x)", kva,0,0,0);
-	return(kva);
+	  memset(ptr,0,size);
+	return ptr;
 }
 
 /*
@@ -725,32 +570,7 @@ uvm_km_protect(struct vm_map *map, vaddr_t addr, vsize_t size, vm_prot_t prot)
 void
 uvm_km_free(struct vm_map *map, vaddr_t addr, vsize_t size, uvm_flag_t flags)
 {
-	UVMHIST_FUNC(__func__); UVMHIST_CALLED(maphist);
-
-	KASSERT((flags & UVM_KMF_TYPEMASK) == UVM_KMF_WIRED ||
-		(flags & UVM_KMF_TYPEMASK) == UVM_KMF_PAGEABLE ||
-		(flags & UVM_KMF_TYPEMASK) == UVM_KMF_VAONLY);
-	KASSERT((addr & PAGE_MASK) == 0);
-	KASSERT(vm_map_pmap(map) == pmap_kernel());
-
-	size = round_page(size);
-
-	if (flags & UVM_KMF_PAGEABLE) {
-		uvm_km_pgremove(addr, addr + size);
-	} else if (flags & UVM_KMF_WIRED) {
-		/*
-		 * Note: uvm_km_pgremove_intrsafe() extracts mapping, thus
-		 * remove it after.  See comment below about KVA visibility.
-		 */
-		uvm_km_pgremove_intrsafe(map, addr, addr + size);
-	}
-
-	/*
-	 * Note: uvm_unmap_remove() calls pmap_update() for us, before
-	 * KVA becomes globally available.
-	 */
-
-	uvm_unmap1(map, addr, addr + size, UVM_FLAG_VAONLY);
+	kern_free(addr);
 }
 
 /* Sanity; must specify both or none. */
