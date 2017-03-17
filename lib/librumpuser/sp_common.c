@@ -302,7 +302,6 @@ sendunlock(struct spclient *spc)
 }
 
 
-__attribute__((no_sanitize_address))
 static int
 dosend(struct spclient *spc, struct iovec *iov, size_t iovlen)
 {
@@ -341,7 +340,7 @@ dosend(struct spclient *spc, struct iovec *iov, size_t iovlen)
 		}
 
 		/* ok, need to adjust iovec for potential next round */
-		while (n >= (ssize_t)iov[0].iov_len && iovlen) {
+		while (iovlen && n >= (ssize_t)iov[0].iov_len) {
 			n -= iov[0].iov_len;
 			iov++;
 			iovlen--;
