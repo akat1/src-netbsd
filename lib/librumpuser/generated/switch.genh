@@ -1,0 +1,528 @@
+switch (syscall_number)
+{
+	case SYS_read:
+		call_sys_read();
+		break;
+	case SYS_write:
+		call_sys_write();
+		break;
+	case SYS_open:
+		call_sys_open();
+		break;
+	case SYS_close:
+		call_sys_close();
+		break;
+	case SYS_link:
+		call_sys_link();
+		break;
+	case SYS_unlink:
+		call_sys_unlink();
+		break;
+	case SYS_chdir:
+		call_sys_chdir();
+		break;
+	case SYS_fchdir:
+		call_sys_fchdir();
+		break;
+	case SYS_mknod_old:
+		call_sys_mknod_old();
+		break;
+	case SYS_chmod:
+		call_sys_chmod();
+		break;
+	case SYS_chown:
+		call_sys_chown();
+		break;
+	case SYS_getpid_with_ppid:
+		call_sys_getpid_with_ppid();
+		break;
+	case SYS_unmount:
+		call_sys_unmount();
+		break;
+	case SYS_setuid:
+		call_sys_setuid();
+		break;
+	case SYS_getuid_with_euid:
+		call_sys_getuid_with_euid();
+		break;
+	case SYS_geteuid:
+		call_sys_geteuid();
+		break;
+	case SYS_recvmsg:
+		call_sys_recvmsg();
+		break;
+	case SYS_sendmsg:
+		call_sys_sendmsg();
+		break;
+	case SYS_recvfrom:
+		call_sys_recvfrom();
+		break;
+	case SYS_accept:
+		call_sys_accept();
+		break;
+	case SYS_getpeername:
+		call_sys_getpeername();
+		break;
+	case SYS_getsockname:
+		call_sys_getsockname();
+		break;
+	case SYS_access:
+		call_sys_access();
+		break;
+	case SYS_chflags:
+		call_sys_chflags();
+		break;
+	case SYS_fchflags:
+		call_sys_fchflags();
+		break;
+	case SYS_sync:
+		call_sys_sync();
+		break;
+	case SYS_getppid:
+		call_sys_getppid();
+		break;
+	case SYS_dup:
+		call_sys_dup();
+		break;
+	case SYS_pipe:
+		call_sys_pipe();
+		break;
+	case SYS_getegid:
+		call_sys_getegid();
+		break;
+	case SYS_ktrace:
+		call_sys_ktrace();
+		break;
+	case SYS_getgid_with_egid:
+		call_sys_getgid_with_egid();
+		break;
+	case SYS___getlogin:
+		call_sys___getlogin();
+		break;
+	case SYS___setlogin:
+		call_sys___setlogin();
+		break;
+	case SYS_ioctl:
+		call_sys_ioctl();
+		break;
+	case SYS_revoke:
+		call_sys_revoke();
+		break;
+	case SYS_symlink:
+		call_sys_symlink();
+		break;
+	case SYS_readlink:
+		call_sys_readlink();
+		break;
+	case SYS_umask:
+		call_sys_umask();
+		break;
+	case SYS_chroot:
+		call_sys_chroot();
+		break;
+	case SYS_getgroups:
+		call_sys_getgroups();
+		break;
+	case SYS_setgroups:
+		call_sys_setgroups();
+		break;
+	case SYS_getpgrp:
+		call_sys_getpgrp();
+		break;
+	case SYS_setpgid:
+		call_sys_setpgid();
+		break;
+	case SYS_dup2:
+		call_sys_dup2();
+		break;
+	case SYS_fcntl:
+		call_sys_fcntl();
+		break;
+	case SYS_select_old:
+		call_sys_select_old();
+		break;
+	case SYS_fsync:
+		call_sys_fsync();
+		break;
+	case SYS_connect:
+		call_sys_connect();
+		break;
+	case SYS_bind:
+		call_sys_bind();
+		break;
+	case SYS_setsockopt:
+		call_sys_setsockopt();
+		break;
+	case SYS_listen:
+		call_sys_listen();
+		break;
+	case SYS_getsockopt:
+		call_sys_getsockopt();
+		break;
+	case SYS_fchown:
+		call_sys_fchown();
+		break;
+	case SYS_fchmod:
+		call_sys_fchmod();
+		break;
+	case SYS_setreuid:
+		call_sys_setreuid();
+		break;
+	case SYS_setregid:
+		call_sys_setregid();
+		break;
+	case SYS_rename:
+		call_sys_rename();
+		break;
+	case SYS_flock:
+		call_sys_flock();
+		break;
+	case SYS_mkfifo:
+		call_sys_mkfifo();
+		break;
+	case SYS_sendto:
+		call_sys_sendto();
+		break;
+	case SYS_shutdown:
+		call_sys_shutdown();
+		break;
+	case SYS_socketpair:
+		call_sys_socketpair();
+		break;
+	case SYS_mkdir:
+		call_sys_mkdir();
+		break;
+	case SYS_rmdir:
+		call_sys_rmdir();
+		break;
+	case SYS_setsid:
+		call_sys_setsid();
+		break;
+	case SYS_pread:
+		call_sys_pread();
+		break;
+	case SYS_pwrite:
+		call_sys_pwrite();
+		break;
+	case SYS_setgid:
+		call_sys_setgid();
+		break;
+	case SYS_setegid:
+		call_sys_setegid();
+		break;
+	case SYS_seteuid:
+		call_sys_seteuid();
+		break;
+	case SYS_pathconf:
+		call_sys_pathconf();
+		break;
+	case SYS_fpathconf:
+		call_sys_fpathconf();
+		break;
+	case SYS_getrlimit:
+		call_sys_getrlimit();
+		break;
+	case SYS_setrlimit:
+		call_sys_setrlimit();
+		break;
+	case SYS_lseek:
+		call_sys_lseek();
+		break;
+	case SYS_truncate:
+		call_sys_truncate();
+		break;
+	case SYS_ftruncate:
+		call_sys_ftruncate();
+		break;
+	case SYS_getpgid:
+		call_sys_getpgid();
+		break;
+	case SYS_reboot:
+		call_sys_reboot();
+		break;
+	case SYS_poll:
+		call_sys_poll();
+		break;
+	case SYS_fdatasync:
+		call_sys_fdatasync();
+		break;
+	case SYS___posix_rename:
+		call_sys___posix_rename();
+		break;
+	case SYS_lchmod:
+		call_sys_lchmod();
+		break;
+	case SYS_lchown:
+		call_sys_lchown();
+		break;
+	case SYS___posix_chown:
+		call_sys___posix_chown();
+		break;
+	case SYS___posix_fchown:
+		call_sys___posix_fchown();
+		break;
+	case SYS___posix_lchown:
+		call_sys___posix_lchown();
+		break;
+	case SYS_getsid:
+		call_sys_getsid();
+		break;
+	case SYS_fktrace:
+		call_sys_fktrace();
+		break;
+	case SYS___getcwd:
+		call_sys___getcwd();
+		break;
+	case SYS_fchroot:
+		call_sys_fchroot();
+		break;
+	case SYS_lchflags:
+		call_sys_lchflags();
+		break;
+	case SYS_issetugid:
+		call_sys_issetugid();
+		break;
+	case SYS_utrace:
+		call_sys_utrace();
+		break;
+	case SYS_kqueue:
+		call_sys_kqueue();
+		break;
+	case SYS_kevent_old:
+		call_sys_kevent_old();
+		break;
+	case SYS_fsync_range:
+		call_sys_fsync_range();
+		break;
+	case SYS_getvfsstat:
+		call_sys_getvfsstat();
+		break;
+	case SYS_statvfs1:
+		call_sys_statvfs1();
+		break;
+	case SYS_fstatvfs1:
+		call_sys_fstatvfs1();
+		break;
+	case SYS_extattrctl:
+		call_sys_extattrctl();
+		break;
+	case SYS_extattr_set_file:
+		call_sys_extattr_set_file();
+		break;
+	case SYS_extattr_get_file:
+		call_sys_extattr_get_file();
+		break;
+	case SYS_extattr_delete_file:
+		call_sys_extattr_delete_file();
+		break;
+	case SYS_extattr_set_fd:
+		call_sys_extattr_set_fd();
+		break;
+	case SYS_extattr_get_fd:
+		call_sys_extattr_get_fd();
+		break;
+	case SYS_extattr_delete_fd:
+		call_sys_extattr_delete_fd();
+		break;
+	case SYS_extattr_set_link:
+		call_sys_extattr_set_link();
+		break;
+	case SYS_extattr_get_link:
+		call_sys_extattr_get_link();
+		break;
+	case SYS_extattr_delete_link:
+		call_sys_extattr_delete_link();
+		break;
+	case SYS_extattr_list_fd:
+		call_sys_extattr_list_fd();
+		break;
+	case SYS_extattr_list_file:
+		call_sys_extattr_list_file();
+		break;
+	case SYS_extattr_list_link:
+		call_sys_extattr_list_link();
+		break;
+	case SYS_pselect_old:
+		call_sys_pselect_old();
+		break;
+	case SYS_pollts_old:
+		call_sys_pollts_old();
+		break;
+	case SYS_setxattr:
+		call_sys_setxattr();
+		break;
+	case SYS_lsetxattr:
+		call_sys_lsetxattr();
+		break;
+	case SYS_fsetxattr:
+		call_sys_fsetxattr();
+		break;
+	case SYS_getxattr:
+		call_sys_getxattr();
+		break;
+	case SYS_lgetxattr:
+		call_sys_lgetxattr();
+		break;
+	case SYS_fgetxattr:
+		call_sys_fgetxattr();
+		break;
+	case SYS_listxattr:
+		call_sys_listxattr();
+		break;
+	case SYS_llistxattr:
+		call_sys_llistxattr();
+		break;
+	case SYS_flistxattr:
+		call_sys_flistxattr();
+		break;
+	case SYS_removexattr:
+		call_sys_removexattr();
+		break;
+	case SYS_lremovexattr:
+		call_sys_lremovexattr();
+		break;
+	case SYS_fremovexattr:
+		call_sys_fremovexattr();
+		break;
+	case SYS_stat_old:
+		call_sys_stat_old();
+		break;
+	case SYS_fstat_old:
+		call_sys_fstat_old();
+		break;
+	case SYS_lstat_old:
+		call_sys_lstat_old();
+		break;
+	case SYS_getdents:
+		call_sys_getdents();
+		break;
+	case SYS_socket:
+		call_sys_socket();
+		break;
+	case SYS_getfh:
+		call_sys_getfh();
+		break;
+	case SYS_fhopen:
+		call_sys_fhopen();
+		break;
+	case SYS_fhstatvfs1:
+		call_sys_fhstatvfs1();
+		break;
+	case SYS_fhstat_old:
+		call_sys_fhstat_old();
+		break;
+	case SYS_aio_cancel:
+		call_sys_aio_cancel();
+		break;
+	case SYS_aio_error:
+		call_sys_aio_error();
+		break;
+	case SYS_aio_fsync:
+		call_sys_aio_fsync();
+		break;
+	case SYS_aio_read:
+		call_sys_aio_read();
+		break;
+	case SYS_aio_return:
+		call_sys_aio_return();
+		break;
+	case SYS_aio_write:
+		call_sys_aio_write();
+		break;
+	case SYS_mount:
+		call_sys_mount();
+		break;
+	case SYS_posix_fadvise:
+		call_sys_posix_fadvise();
+		break;
+	case SYS_select:
+		call_sys_select();
+		break;
+	case SYS_nanosleep:
+		call_sys_nanosleep();
+		break;
+	case SYS_kevent:
+		call_sys_kevent();
+		break;
+	case SYS_pselect:
+		call_sys_pselect();
+		break;
+	case SYS_pollts:
+		call_sys_pollts();
+		break;
+	case SYS_aio_suspend:
+		call_sys_aio_suspend();
+		break;
+	case SYS_stat:
+		call_sys_stat();
+		break;
+	case SYS_fstat:
+		call_sys_fstat();
+		break;
+	case SYS_lstat:
+		call_sys_lstat();
+		break;
+	case SYS_mknod:
+		call_sys_mknod();
+		break;
+	case SYS_fhstat:
+		call_sys_fhstat();
+		break;
+	case SYS_pipe2:
+		call_sys_pipe2();
+		break;
+	case SYS_dup3:
+		call_sys_dup3();
+		break;
+	case SYS_kqueue1:
+		call_sys_kqueue1();
+		break;
+	case SYS_paccept:
+		call_sys_paccept();
+		break;
+	case SYS_linkat:
+		call_sys_linkat();
+		break;
+	case SYS_renameat:
+		call_sys_renameat();
+		break;
+	case SYS_mkfifoat:
+		call_sys_mkfifoat();
+		break;
+	case SYS_mknodat:
+		call_sys_mknodat();
+		break;
+	case SYS_mkdirat:
+		call_sys_mkdirat();
+		break;
+	case SYS_faccessat:
+		call_sys_faccessat();
+		break;
+	case SYS_fchmodat:
+		call_sys_fchmodat();
+		break;
+	case SYS_fchownat:
+		call_sys_fchownat();
+		break;
+	case SYS_fstatat:
+		call_sys_fstatat();
+		break;
+	case SYS_openat:
+		call_sys_openat();
+		break;
+	case SYS_readlinkat:
+		call_sys_readlinkat();
+		break;
+	case SYS_symlinkat:
+		call_sys_symlinkat();
+		break;
+	case SYS_unlinkat:
+		call_sys_unlinkat();
+		break;
+	case SYS_posix_fallocate:
+		call_sys_posix_fallocate();
+		break;
+	case SYS_fdiscard:
+		call_sys_fdiscard();
+		break;
+}

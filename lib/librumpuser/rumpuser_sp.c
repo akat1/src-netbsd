@@ -63,6 +63,7 @@ __RCSID("$NetBSD: rumpuser_sp.c,v 1.70 2015/08/16 11:37:39 pooka Exp $");
 #include <rump/rumpuser.h>
 
 #include "rumpuser_int.h"
+#include "generated/syscalls_nums.genh"
 
 #include "sp_common.c"
 
@@ -1194,12 +1195,13 @@ handlereq(struct spclient *spc)
 
 static void *
 spserver(void *arg)
-{
+{   
+    return 0;
 	struct spservarg *sarg = arg;
 	struct spclient *spc;
 	unsigned idx;
 	int seen;
-	int rv;
+	int rv = 0;
 	unsigned int nfds, maxidx;
 
 	for (idx = 0; idx < MAXCLI; idx++) {
@@ -1317,12 +1319,503 @@ spserver(void *arg)
 	return NULL;
 }
 
+
+#include "generated/syscalls_defs.genh"
+
+#define CHAR_BUF_SIZE 0x100
+#define SOCKADDR_SIZE 0xc8
+#define IOVEC_SIZE 10
+#define GID_SIZE 100
+#define INT_VECT_SIZE 10
+#define POLLFD_SIZE 10
+#define KEVENT_SIZE 10
+
+
+struct iovec_ {
+    void	*iov_base;	/* Base address. */
+    size_t	 iov_len;	/* Length. */
+};
+
+// https://nxr.netbsd.org/xref/src/sys/sys/socket.h
+
+struct msghdr_ {
+    void		*msg_name;	// optional address */
+    socklen_t	msg_namelen;	/* size of address */
+    struct iovec_	*msg_iov;	/* scatter/gather array */
+    int		msg_iovlen;	/* # elements in msg_iov */
+    void		*msg_control;	/* ancillary data, see below */
+    socklen_t	msg_controllen;	/* ancillary data buffer len */
+    int		msg_flags;	/* flags on received message */
+};
+
+struct mmsghdr_ {
+    struct msghdr_ msg_hdr;
+    unsigned int msg_len;
+};
+
+uint32_t get_gid_size(void)
+{
+  uint32_t ret;
+  read(0,(char*)&ret,sizeof(uint32_t));
+  return ret%(GID_SIZE+1);
+}
+
+void* get_gid_table(void)
+{
+  return malloc(sizeof(uint32_t)*GID_SIZE);
+}
+
+uint32_t get_buf_size(void)
+{
+    uint32_t size;
+    read(0,(char*)&size,sizeof(uint32_t));
+    return size%(CHAR_BUF_SIZE+1);
+}
+
+uint32_t* get_buf_size_ptr(void)
+{
+    uint32_t *size=malloc(sizeof(uint32_t));
+    read(0,size,sizeof(uint32_t));
+    *size=(*size)%(CHAR_BUF_SIZE+1);
+    return size;
+}
+
+uint64_t get_uint64(void)
+{
+  uint64_t ret;
+  read(0,(char*)&ret,sizeof(uint64_t));
+  return ret;
+}
+
+uint32_t get_uint32(void)
+{
+  uint32_t ret;
+  read(0,(char*)&ret,sizeof(uint32_t));
+  return ret;
+}
+
+uint32_t get_fd(void)
+{
+  uint32_t ret;
+  read(0,(char*)&ret,sizeof(uint32_t));
+  return ret%10;
+}
+
+uint32_t get_pid(void)
+{
+  uint32_t ret;
+  read(0,(char*)&ret,sizeof(uint32_t));
+  return ret%5;
+}
+
+uint32_t get_gid(void)
+{
+  uint32_t ret;
+  read(0,(char*)&ret,sizeof(uint32_t));
+  return ret%5;
+}
+
+uint32_t get_uid(void)
+{
+  uint32_t ret;
+  read(0,(char*)&ret,sizeof(uint32_t));
+  return ret%5;
+}
+
+char * get_char_buf(void)
+{
+  char *buf=malloc(CHAR_BUF_SIZE);
+  read(0,buf,CHAR_BUF_SIZE);
+  return buf;
+}
+
+char * alloc_char_buf(void)
+{
+  char *buf=malloc(CHAR_BUF_SIZE);
+  memset(buf,0,CHAR_BUF_SIZE);
+  return buf;
+}
+
+void delete_char_buf(void *buf) //todo
+{
+  free(buf);
+}
+
+
+void* get_int_vect(void)
+{
+  uint32_t *ret;
+  ret = malloc(INT_VECT_SIZE*sizeof(uint32_t));
+  read(0,(char*)ret,INT_VECT_SIZE*sizeof(uint32_t));
+  return ret;
+}
+
+uint32_t get_int_vect_size(void)
+{
+  uint32_t ret;
+  read(0,(char*)&ret,sizeof(uint32_t));
+  return ret%(INT_VECT_SIZE);
+}
+     
+
+struct iovec_ * get_iovec(void)
+{
+  struct iovec_ * i = malloc(sizeof(struct iovec_));
+  i->iov_base = get_char_buf();
+  i->iov_len = get_buf_size();
+  return i;
+}
+
+void delete_iovec(struct iovec_ * i)
+{
+    free(i->iov_base);
+    free(i);
+}
+
+struct iovec_ * get_iovec_tab(void)
+{
+    int size=IOVEC_SIZE;
+    struct iovec_* tab = malloc(size*sizeof(struct iovec_));
+    for(int i=0;i<size;i++)
+    {
+        tab[i].iov_base = get_char_buf();
+        tab[i].iov_len = get_buf_size();
+    }
+    return tab;
+    
+}
+
+void delete_iovec_tab(struct iovec_ *tab, int size)
+{
+    int i;
+    for(i=0;i<size;i++)
+        free(tab[i].iov_base);
+    free(tab);
+}
+
+uint32_t get_iovec_size(void)
+{
+    uint32_t size;
+    read(0,&size,sizeof(size));
+    size=size%(IOVEC_SIZE+1);
+    return size;
+}
+
+struct msghdr_ * get_msghdr(void)
+{
+    struct msghdr_ * m= malloc(sizeof(struct msghdr_));
+    m->msg_name=get_char_buf();
+    m->msg_namelen=get_buf_size();
+    m->msg_iovlen=get_iovec_size();
+    
+    struct iovec_* tab=get_iovec_tab();
+    m->msg_iov=tab;
+    
+    m->msg_control=get_char_buf();
+    m->msg_controllen=get_buf_size();
+    
+    m->msg_flags=get_uint32();
+    
+    return m;
+}
+
+void read_msghdr(struct msghdr_ * m)
+{
+    m->msg_name=get_char_buf();
+    m->msg_namelen=get_buf_size();
+    m->msg_iovlen=get_iovec_size();
+    
+    struct iovec_* tab=get_iovec_tab();
+    m->msg_iov=tab;
+    
+    m->msg_control=get_char_buf();
+    m->msg_controllen=get_buf_size();
+    
+    m->msg_flags=get_uint32();
+}
+
+void delete_msghdr(struct msghdr_ *m)
+{
+    delete_iovec_tab(m->msg_iov, m->msg_iovlen);
+    free(m->msg_control);
+    free(m->msg_name);
+    free(m);
+}
+
+struct mmsghdr_ * get_mmsghdr(int size)
+{
+    struct mmsghdr_ *m=malloc(size*sizeof(struct mmsghdr_));
+    for(int i=0;i<size;i++)
+    {
+        read_msghdr(&m[i].msg_hdr);
+    }
+    return m;
+}
+
+void delete_mmsghdr(struct mmsghdr_ *m)//todo
+{
+    free (m);
+}
+
+uint32_t * get_ptr_uint32(void)
+{
+    uint32_t * u = malloc(sizeof(uint32_t));
+    read(0,(char*)u,sizeof(uint32_t));
+    return u;
+    
+}
+
+void delete_ptr_uint32(uint32_t * u)
+{
+    free(u);
+}
+
+
+uint64_t * get_ptr_uint64(void)
+{
+    uint64_t * u = malloc(sizeof(uint64_t));
+    read(0,(char*)u,sizeof(uint64_t));
+    return u;
+    
+}
+
+void delete_ptr_uint64(uint64_t * u)//todo
+{
+    free(u);
+}
+
+void * get_sockaddr(void)
+{
+    void * s= malloc(SOCKADDR_SIZE);
+    read(0,(char*)s,SOCKADDR_SIZE);
+    return s;
+}
+
+void delete_sockaddr(void *s)
+{
+    free(s);
+}
+
+/*
+#define __NFD_SIZE 4
+
+struct fd_set {
+    uint32_t fds_bits[__NFD_SIZE];
+}*/ //woboq says it is 32 bytes
+
+void * get_fd_set(void)
+{
+    void *ptr = malloc(32);
+    read(0,ptr,32);
+    return ptr;
+}
+
+void delete_fd_set(void *ptr)
+{
+    free(ptr);
+}
+
+void * get_timeval50(void)
+{
+    void *ptr = malloc(16);
+    read(0,ptr,16);
+    return ptr;
+}
+
+void * get_timeval(void)
+{
+    void *ptr = malloc(16);
+    read(0,ptr,16);
+    return ptr;
+}
+
+void * get_rlimit(void)
+{
+    void *ptr = malloc(16);
+    read(0,ptr,16);
+    return ptr;
+}
+
+
+uint32_t * get_ptr_sockaddr_size(void)
+{
+    uint32_t * u = malloc(sizeof(uint32_t));
+    read(0,(char*)u,sizeof(uint32_t));
+    *u=(*u)%(SOCKADDR_SIZE+1);
+    return u;
+    
+}
+
+uint32_t get_sockaddr_size(void)
+{
+    uint32_t u;
+    read(0,&u,sizeof(uint32_t));
+    u=u%(SOCKADDR_SIZE+1);
+    return u;
+    
+}
+ 
+ 
+struct sigevent_{
+    int a;
+    int b;
+    int c;
+    int d;
+};
+ 
+struct aiocb_
+{
+     off_t aio_offset;		/* File offset */
+     /*volatile*/ void *aio_buf;		/* I/O buffer in process space */
+     size_t aio_nbytes;		/* Length of transfer */
+     int aio_fildes;			/* File descriptor */
+     int aio_lio_opcode;		/* LIO opcode */
+     int aio_reqprio;		/* Request priority offset */
+     struct sigevent_ aio_sigevent;	/* Signal to deliver */
+     /* Internal kernel variables */
+     int _state;			/* State of the job */
+     int _errno;			/* Error value */
+     long _retval;		/* Return value */
+};
+
+struct aiocb_* get_aiocb(void)
+{
+    struct aiocb_* a = malloc(sizeof(struct aiocb_));
+    a->aio_offset = get_uint32();
+    a->aio_buf=get_char_buf();
+    a->aio_nbytes=CHAR_BUF_SIZE;
+    a->aio_fildes=get_fd();
+    a->aio_lio_opcode=get_uint32();
+    a->aio_reqprio=get_uint32();
+    read(0, &a->aio_sigevent, 32);
+    a->_state=get_uint32();
+    a->_errno=get_uint32();
+    a->_retval=get_uint64();
+    return a;
+}
+
+void delete_aiocb(struct aiocb_* a)
+{
+    free(a->aio_buf);
+    free(a);
+}
+
+void * get_timespec(void)
+{
+    void *ptr = malloc(16);
+    read(0,ptr,16);
+    return ptr;
+}
+
+void * get_pollfd(void)
+{
+    void *ptr = malloc(8*POLLFD_SIZE);
+    read(0,ptr,8*POLLFD_SIZE);
+    return ptr;
+}
+
+uint32_t get_pollfd_size(void)
+{
+    uint32_t pollfd_size;
+    read(0,&pollfd_size,sizeof(uint32_t));
+    return pollfd_size%(POLLFD_SIZE+1);
+}
+
+void * get_timespec50(void)
+{
+    void *ptr = malloc(12);
+    read(0, ptr, 12);
+    return ptr;
+}
+
+void * get_stat30(void)
+{
+    void *ptr = malloc(136);
+    read(0, ptr, 136);
+    return ptr;
+}
+
+void * get_stat(void)
+{
+    void *ptr = malloc(152);
+    read(0, ptr, 152);
+    return ptr;
+}
+
+
+void * get_kevent(void)
+{
+    void *ptr = malloc(40*KEVENT_SIZE);
+    read(0, ptr, 40*KEVENT_SIZE);
+    return ptr;
+}
+
+
+uint32_t get_kevent_size(void)
+{
+    uint32_t pollfd_size;
+    read(0,&pollfd_size,sizeof(uint32_t));
+    return pollfd_size%(KEVENT_SIZE+1);
+}
+
+
+void * get_sigset_t(void)
+{
+    void *ptr = malloc(16);
+    read(0, ptr, 16);
+    return ptr;
+}
+
+void * get_statvfs(void)
+{
+    void *ptr = malloc(2256);
+    read(0, ptr, 2256);
+    return ptr;
+}
+
+
+void call_syscall(int sysnum, uint64_t *data)
+{
+  int rv;
+  register_t retval[2] = {0, 0};
+  
+  rv =  rumpsyscall(sysnum, data, retval);
+  printf("rump_sp: got return value %d & %d/%d\n",
+     rv, (int)retval[0], (int)retval[1]);
+}
+
+uint64_t data[10];
+
+
+#include "generated/syscalls.genh"
+
+//ok, generowanie tego skryptem bylo by fajne
+
 static unsigned cleanupidx;
 static struct sockaddr *cleanupsa;
 int
 rumpuser_sp_init(const char *url,
 	const char *ostype, const char *osrelease, const char *machine)
 {
+	//here begins parsing input
+#define O_CREAT_ 0x200
+#define O_EXCL_ 0x800
+#define O_WRONLY_ 0x1
+	printf("parsing stdin\n");
+
+    //while (__AFL_LOOP(100)) {
+		uint16_t syscall_number;
+		while(read(0,&syscall_number,2))
+		{ 
+			syscall_number = syscall_number % 483; //biggest syscall
+
+	        #include "generated/switch.genh"
+		}
+    //}
+	
+	exit(0);
+	//here ends Eternal's code
+	
 	pthread_t pt;
 	struct spservarg *sarg;
 	struct sockaddr *sap;

@@ -50,6 +50,9 @@ __RCSID("$NetBSD: rump_allserver.c,v 1.39 2015/04/16 10:05:43 pooka Exp $");
 #include <rump/rumpdefs.h>
 #include <rump/rumperr.h>
 
+//#define LIBRUMPUSER /* XXX */
+//#include <rump/rumpuser.h>
+
 __dead static void
 usage(void)
 {
@@ -151,8 +154,9 @@ main(int argc, char *argv[])
 	unsigned nmods = 0, curmod = 0, nlibs = 0, curlib = 0, libidx;
 	unsigned liblast = -1; /* XXXgcc */
 
+	
 	setprogname(argv[0]);
-	sflag = 0;
+	sflag = 1;
 	while ((ch = getopt(argc, argv, "c:d:l:m:r:sv")) != -1) {
 		switch (ch) {
 		case 'c':
@@ -348,8 +352,98 @@ main(int argc, char *argv[])
 	argc -= optind;
 	argv += optind;
 
-	if (argc != 1)
-		usage();
+	//if (argc != 1)
+	//	usage();
+	
+	char **t[100];
+	int ls = 0;
+	/*
+	t[ls++] = strdup("rumpuser");
+	t[ls++] = strdup("rump");
+	t[ls++] = strdup("rumpnet");
+	t[ls++] = strdup("rumpvfs");
+	t[ls++] = strdup("rumpdev");
+	t[ls++] = strdup("rumpnet_virtif");
+	t[ls++] = strdup("rumpnet_bpfjit");
+	t[ls++] = strdup("rumpnet_tap");
+	t[ls++] = strdup("rumpnet_shmif");
+	t[ls++] = strdup("rumpnet_pppoe");
+	t[ls++] = strdup("rumpnet_local");
+	t[ls++] = strdup("rumpnet_npf");
+	t[ls++] = strdup("rumpnet_netmpls");
+	t[ls++] = strdup("rumpnet_gif");
+	t[ls++] = strdup("rumpnet_netinet6");
+	t[ls++] = strdup("rumpnet_netinet");
+	t[ls++] = strdup("rumpnet_netbt");
+	t[ls++] = strdup("rumpnet_net80211");
+	t[ls++] = strdup("rumpnet_net");
+	t[ls++] = strdup("rumpnet_bridge");
+	t[ls++] = strdup("rumpnet_agr");
+	t[ls++] = strdup("rumpkern_sljit");
+	t[ls++] = strdup("rumpkern_z");
+	t[ls++] = strdup("rumpkern_tty");
+	t[ls++] = strdup("rumpkern_sysproxy");
+	t[ls++] = strdup("rumpkern_crypto");
+	t[ls++] = strdup("rumpvfs_aio");
+	t[ls++] = strdup("rumpvfs_layerfs");
+	t[ls++] = strdup("rumpvfs_fifofs");
+	t[ls++] = strdup("rumpfs_nfsserver");
+	t[ls++] = strdup("rumpfs_v7fs");
+	t[ls++] = strdup("rumpfs_union");
+	t[ls++] = strdup("rumpfs_umap");
+	t[ls++] = strdup("rumpfs_udf");
+	t[ls++] = strdup("rumpfs_tmpfs");
+	t[ls++] = strdup("rumpfs_sysvbfs");
+	t[ls++] = strdup("rumpfs_syspuffs");
+	t[ls++] = strdup("rumpfs_smbfs");
+	t[ls++] = strdup("rumpfs_ptyfs");
+	t[ls++] = strdup("rumpfs_null");
+	t[ls++] = strdup("rumpfs_ntfs");
+	t[ls++] = strdup("rumpfs_nilfs");
+	t[ls++] = strdup("rumpfs_nfs");
+	t[ls++] = strdup("rumpfs_msdos");
+	t[ls++] = strdup("rumpfs_mfs");
+	t[ls++] = strdup("rumpfs_lfs");
+	t[ls++] = strdup("rumpfs_kernfs");
+	t[ls++] = strdup("rumpfs_hfs");
+	t[ls++] = strdup("rumpfs_ffs");
+	t[ls++] = strdup("rumpfs_fdesc");
+	t[ls++] = strdup("rumpfs_ext2fs");
+	t[ls++] = strdup("rumpfs_efs");
+	t[ls++] = strdup("rumpfs_cd9660");
+	t[ls++] = strdup("rumpdev_opencrypto");
+	t[ls++] = strdup("rumpdev_wscons");
+	t[ls++] = strdup("rumpdev_vnd");
+	t[ls++] = strdup("rumpdev_sysmon");
+	t[ls++] = strdup("rumpdev_scsipi");
+	t[ls++] = strdup("rumpdev_rnd");
+	t[ls++] = strdup("rumpdev_raidframe");
+	t[ls++] = strdup("rumpdev_putter");
+	t[ls++] = strdup("rumpdev_pud");
+	t[ls++] = strdup("rumpdev_pad");
+	t[ls++] = strdup("rumpdev_netsmb");
+	t[ls++] = strdup("rumpdev_md");
+	t[ls++] = strdup("rumpdev_fss");
+	t[ls++] = strdup("rumpdev_drvctl");
+	t[ls++] = strdup("rumpdev_dm");
+	t[ls++] = strdup("rumpdev_disk");
+	t[ls++] = strdup("rumpdev_cgd");
+	t[ls++] = strdup("rumpdev_bpf");
+	t[ls++] = strdup("rumpdev_audio");*/
+	
+	//t[ls++] = strdup("ss");
+	
+	for (int i=0;i<ls;i++)
+	{
+		if (nlibs - curlib == 0) {
+					libarray = realloc(libarray,
+						(nlibs+ALLOCCHUNK) * sizeof(char *));
+					if (libarray == NULL)
+						die(1, errno, "realloc");
+					nlibs += ALLOCCHUNK;
+				}
+		libarray[curlib++]=t[i];	
+	}
 
 	/*
 	 * Automatically "resolve" component dependencies, i.e.
@@ -463,21 +557,14 @@ main(int argc, char *argv[])
 			die_rumperr(sflag, error, "etfs register");
 	}
 
-	error = rump_init_server(serverurl);
-	if (error)
-		die_rumperr(sflag, error, "rump server init failed");
+    //persistent-mode fuzzing
+    while (__AFL_LOOP(1000)) {
+       error = rump_init_server(serverurl);
+    }
 
-	if (!sflag)
-		rump_daemonize_done(RUMP_DAEMONIZE_SUCCESS);
-
-	sem_init(&sigsem, 0, 0);
-	signal(SIGTERM, sigreboot);
-	signal(SIGINT, sigreboot);
-	sem_wait(&sigsem);
-
-	rump_sys_reboot(0, NULL);
-	/*NOTREACHED*/
-
+    //normal fuzzing
+	//error = rump_init_server(serverurl);
+	
 	return 0;
 }
 

@@ -1,0 +1,2623 @@
+void call_sys_read(void)
+{
+	printf("sys_read\n");
+
+	data[0] = (uint64_t) get_fd();
+	data[1] = (uint64_t) alloc_char_buf();
+	data[2] = (uint64_t) get_buf_size();
+
+	call_syscall(SYS_read, data);
+
+	printf("odczytano : %s\n", (char*) data[1] );
+
+	delete_char_buf((void*) data[1]);
+}
+
+
+void call_sys_write(void)
+{
+	printf("sys_write\n");
+
+	data[0] = (uint64_t) get_fd();
+	data[1] = (uint64_t) get_char_buf();
+	data[2] = (uint64_t) get_buf_size();
+
+	call_syscall(SYS_write, data);
+
+
+	delete_char_buf((void*) data[1]);
+}
+
+
+void call_sys_open(void)
+{
+	printf("sys_open\n");
+
+	data[0] = (uint64_t) get_char_buf();
+	data[1] = (uint64_t) get_uint32();
+	data[2] = (uint64_t) get_uint32();
+
+	call_syscall(SYS_open, data);
+
+
+	delete_char_buf((void*) data[0]);
+}
+
+
+void call_sys_close(void)
+{
+	printf("sys_close\n");
+
+	data[0] = (uint64_t) get_fd();
+
+	call_syscall(SYS_close, data);
+
+
+}
+
+
+void call_sys_link(void)
+{
+	printf("sys_link\n");
+
+	data[0] = (uint64_t) get_char_buf();
+	data[1] = (uint64_t) get_char_buf();
+
+	call_syscall(SYS_link, data);
+
+
+	delete_char_buf((void*) data[0]);
+	delete_char_buf((void*) data[1]);
+}
+
+
+void call_sys_unlink(void)
+{
+	printf("sys_unlink\n");
+
+	data[0] = (uint64_t) get_char_buf();
+
+	call_syscall(SYS_unlink, data);
+
+
+	delete_char_buf((void*) data[0]);
+}
+
+
+void call_sys_chdir(void)
+{
+	printf("sys_chdir\n");
+
+	data[0] = (uint64_t) get_char_buf();
+
+	call_syscall(SYS_chdir, data);
+
+
+	delete_char_buf((void*) data[0]);
+}
+
+
+void call_sys_fchdir(void)
+{
+	printf("sys_fchdir\n");
+
+	data[0] = (uint64_t) get_fd();
+
+	call_syscall(SYS_fchdir, data);
+
+
+}
+
+
+void call_sys_mknod_old(void)
+{
+	printf("sys_mknod_old\n");
+
+	data[0] = (uint64_t) get_char_buf();
+	data[1] = (uint64_t) get_uint32();
+	data[2] = (uint64_t) get_uint32();
+
+	call_syscall(SYS_mknod_old, data);
+
+
+	delete_char_buf((void*) data[0]);
+}
+
+
+void call_sys_chmod(void)
+{
+	printf("sys_chmod\n");
+
+	data[0] = (uint64_t) get_char_buf();
+	data[1] = (uint64_t) get_uint32();
+
+	call_syscall(SYS_chmod, data);
+
+
+	delete_char_buf((void*) data[0]);
+}
+
+
+void call_sys_chown(void)
+{
+	printf("sys_chown\n");
+
+	data[0] = (uint64_t) get_char_buf();
+	data[1] = (uint64_t) get_uid();
+	data[2] = (uint64_t) get_gid();
+
+	call_syscall(SYS_chown, data);
+
+
+	delete_char_buf((void*) data[0]);
+}
+
+
+void call_sys_getpid_with_ppid(void)
+{
+	printf("sys_getpid_with_ppid\n");
+
+
+	call_syscall(SYS_getpid_with_ppid, data);
+
+
+}
+
+
+void call_sys_unmount(void)
+{
+	printf("sys_unmount\n");
+
+	data[0] = (uint64_t) get_char_buf();
+	data[1] = (uint64_t) get_uint32();
+
+	call_syscall(SYS_unmount, data);
+
+
+	delete_char_buf((void*) data[0]);
+}
+
+
+void call_sys_setuid(void)
+{
+	printf("sys_setuid\n");
+
+	data[0] = (uint64_t) get_uid();
+
+	call_syscall(SYS_setuid, data);
+
+
+}
+
+
+void call_sys_getuid_with_euid(void)
+{
+	printf("sys_getuid_with_euid\n");
+
+
+	call_syscall(SYS_getuid_with_euid, data);
+
+
+}
+
+
+void call_sys_geteuid(void)
+{
+	printf("sys_geteuid\n");
+
+
+	call_syscall(SYS_geteuid, data);
+
+
+}
+
+
+void call_sys_recvmsg(void)
+{
+	printf("sys_recvmsg\n");
+
+	data[0] = (uint64_t) get_fd();
+	data[1] = (uint64_t) get_msghdr();
+	data[2] = (uint64_t) get_uint32();
+
+	call_syscall(SYS_recvmsg, data);
+
+
+	delete_msghdr((void*) data[1]);
+}
+
+
+void call_sys_sendmsg(void)
+{
+	printf("sys_sendmsg\n");
+
+	data[0] = (uint64_t) get_fd();
+	data[1] = (uint64_t) get_msghdr();
+	data[2] = (uint64_t) get_uint32();
+
+	call_syscall(SYS_sendmsg, data);
+
+
+	delete_msghdr((void*) data[1]);
+}
+
+
+void call_sys_recvfrom(void)
+{
+	printf("sys_recvfrom\n");
+
+	data[0] = (uint64_t) get_fd();
+	data[1] = (uint64_t) alloc_char_buf();
+	data[2] = (uint64_t) get_buf_size();
+	data[3] = (uint64_t) get_uint32();
+	data[4] = (uint64_t) get_sockaddr();
+	data[5] = (uint64_t) get_ptr_sockaddr_size();
+
+	call_syscall(SYS_recvfrom, data);
+
+	printf("odczytano : %s\n", (char*) data[1] );
+
+	delete_char_buf((void*) data[1]);
+	delete_sockaddr((void*) data[4]);
+	free((void*) data[5]);
+}
+
+
+void call_sys_accept(void)
+{
+	printf("sys_accept\n");
+
+	data[0] = (uint64_t) get_fd();
+	data[1] = (uint64_t) get_sockaddr();
+	data[2] = (uint64_t) get_ptr_sockaddr_size();
+
+	call_syscall(SYS_accept, data);
+
+
+	delete_sockaddr((void*) data[1]);
+	free((void*) data[2]);
+}
+
+
+void call_sys_getpeername(void)
+{
+	printf("sys_getpeername\n");
+
+	data[0] = (uint64_t) get_fd();
+	data[1] = (uint64_t) get_sockaddr();
+	data[2] = (uint64_t) get_ptr_sockaddr_size();
+
+	call_syscall(SYS_getpeername, data);
+
+
+	delete_sockaddr((void*) data[1]);
+	free((void*) data[2]);
+}
+
+
+void call_sys_getsockname(void)
+{
+	printf("sys_getsockname\n");
+
+	data[0] = (uint64_t) get_fd();
+	data[1] = (uint64_t) get_sockaddr();
+	data[2] = (uint64_t) get_ptr_sockaddr_size();
+
+	call_syscall(SYS_getsockname, data);
+
+
+	delete_sockaddr((void*) data[1]);
+	free((void*) data[2]);
+}
+
+
+void call_sys_access(void)
+{
+	printf("sys_access\n");
+
+	data[0] = (uint64_t) get_char_buf();
+	data[1] = (uint64_t) get_uint32();
+
+	call_syscall(SYS_access, data);
+
+
+	delete_char_buf((void*) data[0]);
+}
+
+
+void call_sys_chflags(void)
+{
+	printf("sys_chflags\n");
+
+	data[0] = (uint64_t) get_char_buf();
+	data[1] = (uint64_t) get_uint64();
+
+	call_syscall(SYS_chflags, data);
+
+
+	delete_char_buf((void*) data[0]);
+}
+
+
+void call_sys_fchflags(void)
+{
+	printf("sys_fchflags\n");
+
+	data[0] = (uint64_t) get_uint32();
+	data[1] = (uint64_t) get_uint64();
+
+	call_syscall(SYS_fchflags, data);
+
+
+}
+
+
+void call_sys_sync(void)
+{
+	printf("sys_sync\n");
+
+
+	call_syscall(SYS_sync, data);
+
+
+}
+
+
+void call_sys_getppid(void)
+{
+	printf("sys_getppid\n");
+
+
+	call_syscall(SYS_getppid, data);
+
+
+}
+
+
+void call_sys_dup(void)
+{
+	printf("sys_dup\n");
+
+	data[0] = (uint64_t) get_fd();
+
+	call_syscall(SYS_dup, data);
+
+
+}
+
+
+void call_sys_pipe(void)
+{
+	printf("sys_pipe\n");
+
+
+	call_syscall(SYS_pipe, data);
+
+
+}
+
+
+void call_sys_getegid(void)
+{
+	printf("sys_getegid\n");
+
+
+	call_syscall(SYS_getegid, data);
+
+
+}
+
+
+void call_sys_ktrace(void)
+{
+	printf("sys_ktrace\n");
+
+	data[0] = (uint64_t) get_char_buf();
+	data[1] = (uint64_t) get_uint32();
+	data[2] = (uint64_t) get_uint32();
+	data[3] = (uint64_t) get_pid();
+
+	call_syscall(SYS_ktrace, data);
+
+
+	delete_char_buf((void*) data[0]);
+}
+
+
+void call_sys_getgid_with_egid(void)
+{
+	printf("sys_getgid_with_egid\n");
+
+
+	call_syscall(SYS_getgid_with_egid, data);
+
+
+}
+
+
+void call_sys___getlogin(void)
+{
+	printf("sys___getlogin\n");
+
+	data[0] = (uint64_t) get_char_buf();
+	data[1] = (uint64_t) get_buf_size();
+
+	call_syscall(SYS___getlogin, data);
+
+
+	delete_char_buf((void*) data[0]);
+}
+
+
+void call_sys___setlogin(void)
+{
+	printf("sys___setlogin\n");
+
+	data[0] = (uint64_t) get_char_buf();
+
+	call_syscall(SYS___setlogin, data);
+
+
+	delete_char_buf((void*) data[0]);
+}
+
+
+void call_sys_ioctl(void)
+{
+	printf("sys_ioctl\n");
+
+	data[0] = (uint64_t) get_fd();
+	data[1] = (uint64_t) get_uint64();
+	data[2] = (uint64_t) get_char_buf();
+
+	call_syscall(SYS_ioctl, data);
+
+
+	delete_char_buf((void*) data[2]);
+}
+
+
+void call_sys_revoke(void)
+{
+	printf("sys_revoke\n");
+
+	data[0] = (uint64_t) get_char_buf();
+
+	call_syscall(SYS_revoke, data);
+
+
+	delete_char_buf((void*) data[0]);
+}
+
+
+void call_sys_symlink(void)
+{
+	printf("sys_symlink\n");
+
+	data[0] = (uint64_t) get_char_buf();
+	data[1] = (uint64_t) get_char_buf();
+
+	call_syscall(SYS_symlink, data);
+
+
+	delete_char_buf((void*) data[0]);
+	delete_char_buf((void*) data[1]);
+}
+
+
+void call_sys_readlink(void)
+{
+	printf("sys_readlink\n");
+
+	data[0] = (uint64_t) get_char_buf();
+	data[1] = (uint64_t) get_char_buf();
+	data[2] = (uint64_t) get_buf_size();
+
+	call_syscall(SYS_readlink, data);
+
+
+	delete_char_buf((void*) data[0]);
+	delete_char_buf((void*) data[1]);
+}
+
+
+void call_sys_umask(void)
+{
+	printf("sys_umask\n");
+
+	data[0] = (uint64_t) get_uint32();
+
+	call_syscall(SYS_umask, data);
+
+
+}
+
+
+void call_sys_chroot(void)
+{
+	printf("sys_chroot\n");
+
+	data[0] = (uint64_t) get_char_buf();
+
+	call_syscall(SYS_chroot, data);
+
+
+	delete_char_buf((void*) data[0]);
+}
+
+
+void call_sys_getgroups(void)
+{
+	printf("sys_getgroups\n");
+
+	data[0] = (uint64_t) get_gid_size();
+	data[1] = (uint64_t) get_gid_table();
+
+	call_syscall(SYS_getgroups, data);
+
+
+	free((void*) data[1]);
+}
+
+
+void call_sys_setgroups(void)
+{
+	printf("sys_setgroups\n");
+
+	data[0] = (uint64_t) get_gid_size();
+	data[1] = (uint64_t) get_gid_table();
+
+	call_syscall(SYS_setgroups, data);
+
+
+	free((void*) data[1]);
+}
+
+
+void call_sys_getpgrp(void)
+{
+	printf("sys_getpgrp\n");
+
+
+	call_syscall(SYS_getpgrp, data);
+
+
+}
+
+
+void call_sys_setpgid(void)
+{
+	printf("sys_setpgid\n");
+
+	data[0] = (uint64_t) get_pid();
+	data[1] = (uint64_t) get_pid();
+
+	call_syscall(SYS_setpgid, data);
+
+
+}
+
+
+void call_sys_dup2(void)
+{
+	printf("sys_dup2\n");
+
+	data[0] = (uint64_t) get_fd();
+	data[1] = (uint64_t) get_fd();
+
+	call_syscall(SYS_dup2, data);
+
+
+}
+
+
+void call_sys_fcntl(void)
+{
+	printf("sys_fcntl\n");
+
+	data[0] = (uint64_t) get_fd();
+	data[1] = (uint64_t) get_uint32();
+	data[2] = (uint64_t) get_char_buf();
+
+	call_syscall(SYS_fcntl, data);
+
+
+	delete_char_buf((void*) data[2]);
+}
+
+
+void call_sys_select_old(void)
+{
+	printf("sys_select_old\n");
+
+	data[0] = (uint64_t) get_uint32();
+	data[1] = (uint64_t) get_fd_set();
+	data[2] = (uint64_t) get_fd_set();
+	data[3] = (uint64_t) get_fd_set();
+	data[4] = (uint64_t) get_timeval50();
+
+	call_syscall(SYS_select_old, data);
+
+
+	delete_fd_set((void*) data[1]);
+	delete_fd_set((void*) data[2]);
+	delete_fd_set((void*) data[3]);
+	free((void*) data[4]);
+}
+
+
+void call_sys_fsync(void)
+{
+	printf("sys_fsync\n");
+
+	data[0] = (uint64_t) get_fd();
+
+	call_syscall(SYS_fsync, data);
+
+
+}
+
+
+void call_sys_connect(void)
+{
+	printf("sys_connect\n");
+
+	data[0] = (uint64_t) get_fd();
+	data[1] = (uint64_t) get_sockaddr();
+	data[2] = (uint64_t) get_sockaddr_size();
+
+	call_syscall(SYS_connect, data);
+
+
+	delete_sockaddr((void*) data[1]);
+}
+
+
+void call_sys_bind(void)
+{
+	printf("sys_bind\n");
+
+	data[0] = (uint64_t) get_fd();
+	data[1] = (uint64_t) get_sockaddr();
+	data[2] = (uint64_t) get_sockaddr_size();
+
+	call_syscall(SYS_bind, data);
+
+
+	delete_sockaddr((void*) data[1]);
+}
+
+
+void call_sys_setsockopt(void)
+{
+	printf("sys_setsockopt\n");
+
+	data[0] = (uint64_t) get_fd();
+	data[1] = (uint64_t) get_uint32();
+	data[2] = (uint64_t) get_uint32();
+	data[3] = (uint64_t) get_sockaddr();
+	data[4] = (uint64_t) get_sockaddr_size();
+
+	call_syscall(SYS_setsockopt, data);
+
+
+	delete_sockaddr((void*) data[3]);
+}
+
+
+void call_sys_listen(void)
+{
+	printf("sys_listen\n");
+
+	data[0] = (uint64_t) get_fd();
+	data[1] = (uint64_t) get_uint32();
+
+	call_syscall(SYS_listen, data);
+
+
+}
+
+
+void call_sys_getsockopt(void)
+{
+	printf("sys_getsockopt\n");
+
+	data[0] = (uint64_t) get_fd();
+	data[1] = (uint64_t) get_uint32();
+	data[2] = (uint64_t) get_uint32();
+	data[3] = (uint64_t) get_sockaddr();
+	data[4] = (uint64_t) get_ptr_sockaddr_size();
+
+	call_syscall(SYS_getsockopt, data);
+
+
+	delete_sockaddr((void*) data[3]);
+	free((void*) data[4]);
+}
+
+
+void call_sys_fchown(void)
+{
+	printf("sys_fchown\n");
+
+	data[0] = (uint64_t) get_fd();
+	data[1] = (uint64_t) get_uid();
+	data[2] = (uint64_t) get_gid();
+
+	call_syscall(SYS_fchown, data);
+
+
+}
+
+
+void call_sys_fchmod(void)
+{
+	printf("sys_fchmod\n");
+
+	data[0] = (uint64_t) get_fd();
+	data[1] = (uint64_t) get_uint32();
+
+	call_syscall(SYS_fchmod, data);
+
+
+}
+
+
+void call_sys_setreuid(void)
+{
+	printf("sys_setreuid\n");
+
+	data[0] = (uint64_t) get_uid();
+	data[1] = (uint64_t) get_uid();
+
+	call_syscall(SYS_setreuid, data);
+
+
+}
+
+
+void call_sys_setregid(void)
+{
+	printf("sys_setregid\n");
+
+	data[0] = (uint64_t) get_gid();
+	data[1] = (uint64_t) get_gid();
+
+	call_syscall(SYS_setregid, data);
+
+
+}
+
+
+void call_sys_rename(void)
+{
+	printf("sys_rename\n");
+
+	data[0] = (uint64_t) get_char_buf();
+	data[1] = (uint64_t) get_char_buf();
+
+	call_syscall(SYS_rename, data);
+
+
+	delete_char_buf((void*) data[0]);
+	delete_char_buf((void*) data[1]);
+}
+
+
+void call_sys_flock(void)
+{
+	printf("sys_flock\n");
+
+	data[0] = (uint64_t) get_fd();
+	data[1] = (uint64_t) get_uint32();
+
+	call_syscall(SYS_flock, data);
+
+
+}
+
+
+void call_sys_mkfifo(void)
+{
+	printf("sys_mkfifo\n");
+
+	data[0] = (uint64_t) get_char_buf();
+	data[1] = (uint64_t) get_uint32();
+
+	call_syscall(SYS_mkfifo, data);
+
+
+	delete_char_buf((void*) data[0]);
+}
+
+
+void call_sys_sendto(void)
+{
+	printf("sys_sendto\n");
+
+	data[0] = (uint64_t) get_fd();
+	data[1] = (uint64_t) get_char_buf();
+	data[2] = (uint64_t) get_buf_size();
+	data[3] = (uint64_t) get_uint32();
+	data[4] = (uint64_t) get_sockaddr();
+	data[5] = (uint64_t) get_sockaddr_size();
+
+	call_syscall(SYS_sendto, data);
+
+
+	delete_char_buf((void*) data[1]);
+	delete_sockaddr((void*) data[4]);
+}
+
+
+void call_sys_shutdown(void)
+{
+	printf("sys_shutdown\n");
+
+	data[0] = (uint64_t) get_fd();
+	data[1] = (uint64_t) get_uint32();
+
+	call_syscall(SYS_shutdown, data);
+
+
+}
+
+
+void call_sys_socketpair(void)
+{
+	printf("sys_socketpair\n");
+
+	data[0] = (uint64_t) get_uint32();
+	data[1] = (uint64_t) get_uint32();
+	data[2] = (uint64_t) get_uint32();
+	data[3] = (uint64_t) get_ptr_uint64();
+
+	call_syscall(SYS_socketpair, data);
+
+
+	free((void*) data[3]);
+}
+
+
+void call_sys_mkdir(void)
+{
+	printf("sys_mkdir\n");
+
+	data[0] = (uint64_t) get_char_buf();
+	data[1] = (uint64_t) get_uint32();
+
+	call_syscall(SYS_mkdir, data);
+
+
+	delete_char_buf((void*) data[0]);
+}
+
+
+void call_sys_rmdir(void)
+{
+	printf("sys_rmdir\n");
+
+	data[0] = (uint64_t) get_char_buf();
+
+	call_syscall(SYS_rmdir, data);
+
+
+	delete_char_buf((void*) data[0]);
+}
+
+
+void call_sys_setsid(void)
+{
+	printf("sys_setsid\n");
+
+
+	call_syscall(SYS_setsid, data);
+
+
+}
+
+
+void call_sys_pread(void)
+{
+	printf("sys_pread\n");
+
+	data[0] = (uint64_t) get_fd();
+	data[1] = (uint64_t) get_char_buf();
+	data[2] = (uint64_t) get_buf_size();
+	data[3] = (uint64_t) get_uint32();
+	data[4] = (uint64_t) get_uint32();
+
+	call_syscall(SYS_pread, data);
+
+
+	delete_char_buf((void*) data[1]);
+}
+
+
+void call_sys_pwrite(void)
+{
+	printf("sys_pwrite\n");
+
+	data[0] = (uint64_t) get_fd();
+	data[1] = (uint64_t) get_char_buf();
+	data[2] = (uint64_t) get_buf_size();
+	data[3] = (uint64_t) get_uint32();
+	data[4] = (uint64_t) get_uint32();
+
+	call_syscall(SYS_pwrite, data);
+
+
+	delete_char_buf((void*) data[1]);
+}
+
+
+void call_sys_setgid(void)
+{
+	printf("sys_setgid\n");
+
+	data[0] = (uint64_t) get_gid();
+
+	call_syscall(SYS_setgid, data);
+
+
+}
+
+
+void call_sys_setegid(void)
+{
+	printf("sys_setegid\n");
+
+	data[0] = (uint64_t) get_gid();
+
+	call_syscall(SYS_setegid, data);
+
+
+}
+
+
+void call_sys_seteuid(void)
+{
+	printf("sys_seteuid\n");
+
+	data[0] = (uint64_t) get_uid();
+
+	call_syscall(SYS_seteuid, data);
+
+
+}
+
+
+void call_sys_pathconf(void)
+{
+	printf("sys_pathconf\n");
+
+	data[0] = (uint64_t) get_char_buf();
+	data[1] = (uint64_t) get_uint32();
+
+	call_syscall(SYS_pathconf, data);
+
+
+	delete_char_buf((void*) data[0]);
+}
+
+
+void call_sys_fpathconf(void)
+{
+	printf("sys_fpathconf\n");
+
+	data[0] = (uint64_t) get_fd();
+	data[1] = (uint64_t) get_uint32();
+
+	call_syscall(SYS_fpathconf, data);
+
+
+}
+
+
+void call_sys_getrlimit(void)
+{
+	printf("sys_getrlimit\n");
+
+	data[0] = (uint64_t) get_uint32();
+	data[1] = (uint64_t) get_rlimit();
+
+	call_syscall(SYS_getrlimit, data);
+
+
+	free((void*) data[1]);
+}
+
+
+void call_sys_setrlimit(void)
+{
+	printf("sys_setrlimit\n");
+
+	data[0] = (uint64_t) get_uint32();
+	data[1] = (uint64_t) get_rlimit();
+
+	call_syscall(SYS_setrlimit, data);
+
+
+	free((void*) data[1]);
+}
+
+
+void call_sys_lseek(void)
+{
+	printf("sys_lseek\n");
+
+	data[0] = (uint64_t) get_fd();
+	data[1] = (uint64_t) get_uint32();
+	data[2] = (uint64_t) get_uint32();
+	data[3] = (uint64_t) get_uint32();
+
+	call_syscall(SYS_lseek, data);
+
+
+}
+
+
+void call_sys_truncate(void)
+{
+	printf("sys_truncate\n");
+
+	data[0] = (uint64_t) get_char_buf();
+	data[1] = (uint64_t) get_uint32();
+	data[2] = (uint64_t) get_uint32();
+
+	call_syscall(SYS_truncate, data);
+
+
+	delete_char_buf((void*) data[0]);
+}
+
+
+void call_sys_ftruncate(void)
+{
+	printf("sys_ftruncate\n");
+
+	data[0] = (uint64_t) get_fd();
+	data[1] = (uint64_t) get_uint32();
+	data[2] = (uint64_t) get_uint32();
+
+	call_syscall(SYS_ftruncate, data);
+
+
+}
+
+
+void call_sys_getpgid(void)
+{
+	printf("sys_getpgid\n");
+
+	data[0] = (uint64_t) get_pid();
+
+	call_syscall(SYS_getpgid, data);
+
+
+}
+
+
+void call_sys_reboot(void)
+{
+	printf("sys_reboot\n");
+
+	data[0] = (uint64_t) get_uint32();
+	data[1] = (uint64_t) get_char_buf();
+
+	call_syscall(SYS_reboot, data);
+
+
+	delete_char_buf((void*) data[1]);
+}
+
+
+void call_sys_poll(void)
+{
+	printf("sys_poll\n");
+
+	data[0] = (uint64_t) get_pollfd();
+	data[1] = (uint64_t) get_pollfd_size();
+	data[2] = (uint64_t) get_uint32();
+
+	call_syscall(SYS_poll, data);
+
+
+	free((void*) data[0]);
+}
+
+
+void call_sys_fdatasync(void)
+{
+	printf("sys_fdatasync\n");
+
+	data[0] = (uint64_t) get_fd();
+
+	call_syscall(SYS_fdatasync, data);
+
+
+}
+
+
+void call_sys___posix_rename(void)
+{
+	printf("sys___posix_rename\n");
+
+	data[0] = (uint64_t) get_char_buf();
+	data[1] = (uint64_t) get_char_buf();
+
+	call_syscall(SYS___posix_rename, data);
+
+
+	delete_char_buf((void*) data[0]);
+	delete_char_buf((void*) data[1]);
+}
+
+
+void call_sys_lchmod(void)
+{
+	printf("sys_lchmod\n");
+
+	data[0] = (uint64_t) get_char_buf();
+	data[1] = (uint64_t) get_uint32();
+
+	call_syscall(SYS_lchmod, data);
+
+
+	delete_char_buf((void*) data[0]);
+}
+
+
+void call_sys_lchown(void)
+{
+	printf("sys_lchown\n");
+
+	data[0] = (uint64_t) get_char_buf();
+	data[1] = (uint64_t) get_uid();
+	data[2] = (uint64_t) get_gid();
+
+	call_syscall(SYS_lchown, data);
+
+
+	delete_char_buf((void*) data[0]);
+}
+
+
+void call_sys___posix_chown(void)
+{
+	printf("sys___posix_chown\n");
+
+	data[0] = (uint64_t) get_char_buf();
+	data[1] = (uint64_t) get_uid();
+	data[2] = (uint64_t) get_gid();
+
+	call_syscall(SYS___posix_chown, data);
+
+
+	delete_char_buf((void*) data[0]);
+}
+
+
+void call_sys___posix_fchown(void)
+{
+	printf("sys___posix_fchown\n");
+
+	data[0] = (uint64_t) get_fd();
+	data[1] = (uint64_t) get_uid();
+	data[2] = (uint64_t) get_gid();
+
+	call_syscall(SYS___posix_fchown, data);
+
+
+}
+
+
+void call_sys___posix_lchown(void)
+{
+	printf("sys___posix_lchown\n");
+
+	data[0] = (uint64_t) get_char_buf();
+	data[1] = (uint64_t) get_uid();
+	data[2] = (uint64_t) get_gid();
+
+	call_syscall(SYS___posix_lchown, data);
+
+
+	delete_char_buf((void*) data[0]);
+}
+
+
+void call_sys_getsid(void)
+{
+	printf("sys_getsid\n");
+
+	data[0] = (uint64_t) get_pid();
+
+	call_syscall(SYS_getsid, data);
+
+
+}
+
+
+void call_sys_fktrace(void)
+{
+	printf("sys_fktrace\n");
+
+	data[0] = (uint64_t) get_fd();
+	data[1] = (uint64_t) get_uint32();
+	data[2] = (uint64_t) get_uint32();
+	data[3] = (uint64_t) get_pid();
+
+	call_syscall(SYS_fktrace, data);
+
+
+}
+
+
+void call_sys___getcwd(void)
+{
+	printf("sys___getcwd\n");
+
+	data[0] = (uint64_t) get_char_buf();
+	data[1] = (uint64_t) get_uint64();
+
+	call_syscall(SYS___getcwd, data);
+
+
+	delete_char_buf((void*) data[0]);
+}
+
+
+void call_sys_fchroot(void)
+{
+	printf("sys_fchroot\n");
+
+	data[0] = (uint64_t) get_fd();
+
+	call_syscall(SYS_fchroot, data);
+
+
+}
+
+
+void call_sys_lchflags(void)
+{
+	printf("sys_lchflags\n");
+
+	data[0] = (uint64_t) get_char_buf();
+	data[1] = (uint64_t) get_uint64();
+
+	call_syscall(SYS_lchflags, data);
+
+
+	delete_char_buf((void*) data[0]);
+}
+
+
+void call_sys_issetugid(void)
+{
+	printf("sys_issetugid\n");
+
+
+	call_syscall(SYS_issetugid, data);
+
+
+}
+
+
+void call_sys_utrace(void)
+{
+	printf("sys_utrace\n");
+
+	data[0] = (uint64_t) get_char_buf();
+	data[1] = (uint64_t) get_char_buf();
+	data[2] = (uint64_t) get_buf_size();
+
+	call_syscall(SYS_utrace, data);
+
+
+	delete_char_buf((void*) data[0]);
+	delete_char_buf((void*) data[1]);
+}
+
+
+void call_sys_kqueue(void)
+{
+	printf("sys_kqueue\n");
+
+
+	call_syscall(SYS_kqueue, data);
+
+
+}
+
+
+void call_sys_kevent_old(void)
+{
+	printf("sys_kevent_old\n");
+
+	data[0] = (uint64_t) get_fd();
+	data[1] = (uint64_t) get_kevent();
+	data[2] = (uint64_t) get_kevent_size();
+	data[3] = (uint64_t) get_kevent();
+	data[4] = (uint64_t) get_kevent_size();
+	data[5] = (uint64_t) get_timespec50();
+
+	call_syscall(SYS_kevent_old, data);
+
+
+	free((void*) data[1]);
+	free((void*) data[3]);
+	free((void*) data[5]);
+}
+
+
+void call_sys_fsync_range(void)
+{
+	printf("sys_fsync_range\n");
+
+	data[0] = (uint64_t) get_fd();
+	data[1] = (uint64_t) get_uint32();
+	data[2] = (uint64_t) get_uint32();
+	data[3] = (uint64_t) get_uint32();
+
+	call_syscall(SYS_fsync_range, data);
+
+
+}
+
+
+void call_sys_getvfsstat(void)
+{
+	printf("sys_getvfsstat\n");
+
+	data[0] = (uint64_t) get_statvfs();
+	data[1] = (uint64_t) get_buf_size();
+	data[2] = (uint64_t) get_uint32();
+
+	call_syscall(SYS_getvfsstat, data);
+
+
+	free((void*) data[0]);
+}
+
+
+void call_sys_statvfs1(void)
+{
+	printf("sys_statvfs1\n");
+
+	data[0] = (uint64_t) get_char_buf();
+	data[1] = (uint64_t) get_statvfs();
+	data[2] = (uint64_t) get_uint32();
+
+	call_syscall(SYS_statvfs1, data);
+
+
+	delete_char_buf((void*) data[0]);
+	free((void*) data[1]);
+}
+
+
+void call_sys_fstatvfs1(void)
+{
+	printf("sys_fstatvfs1\n");
+
+	data[0] = (uint64_t) get_fd();
+	data[1] = (uint64_t) get_statvfs();
+	data[2] = (uint64_t) get_uint32();
+
+	call_syscall(SYS_fstatvfs1, data);
+
+
+	free((void*) data[1]);
+}
+
+
+void call_sys_extattrctl(void)
+{
+	printf("sys_extattrctl\n");
+
+	data[0] = (uint64_t) get_char_buf();
+	data[1] = (uint64_t) get_uint32();
+	data[2] = (uint64_t) get_char_buf();
+	data[3] = (uint64_t) get_uint32();
+	data[4] = (uint64_t) get_char_buf();
+
+	call_syscall(SYS_extattrctl, data);
+
+
+	delete_char_buf((void*) data[0]);
+	delete_char_buf((void*) data[2]);
+	delete_char_buf((void*) data[4]);
+}
+
+
+void call_sys_extattr_set_file(void)
+{
+	printf("sys_extattr_set_file\n");
+
+	data[0] = (uint64_t) get_char_buf();
+	data[1] = (uint64_t) get_uint32();
+	data[2] = (uint64_t) get_char_buf();
+	data[3] = (uint64_t) get_char_buf();
+	data[4] = (uint64_t) get_uint64();
+
+	call_syscall(SYS_extattr_set_file, data);
+
+
+	delete_char_buf((void*) data[0]);
+	delete_char_buf((void*) data[2]);
+	delete_char_buf((void*) data[3]);
+}
+
+
+void call_sys_extattr_get_file(void)
+{
+	printf("sys_extattr_get_file\n");
+
+	data[0] = (uint64_t) get_char_buf();
+	data[1] = (uint64_t) get_uint32();
+	data[2] = (uint64_t) get_char_buf();
+	data[3] = (uint64_t) get_char_buf();
+	data[4] = (uint64_t) get_buf_size();
+
+	call_syscall(SYS_extattr_get_file, data);
+
+
+	delete_char_buf((void*) data[0]);
+	delete_char_buf((void*) data[2]);
+	delete_char_buf((void*) data[3]);
+}
+
+
+void call_sys_extattr_delete_file(void)
+{
+	printf("sys_extattr_delete_file\n");
+
+	data[0] = (uint64_t) get_char_buf();
+	data[1] = (uint64_t) get_uint32();
+	data[2] = (uint64_t) get_char_buf();
+
+	call_syscall(SYS_extattr_delete_file, data);
+
+
+	delete_char_buf((void*) data[0]);
+	delete_char_buf((void*) data[2]);
+}
+
+
+void call_sys_extattr_set_fd(void)
+{
+	printf("sys_extattr_set_fd\n");
+
+	data[0] = (uint64_t) get_fd();
+	data[1] = (uint64_t) get_uint32();
+	data[2] = (uint64_t) get_char_buf();
+	data[3] = (uint64_t) get_char_buf();
+	data[4] = (uint64_t) get_buf_size();
+
+	call_syscall(SYS_extattr_set_fd, data);
+
+
+	delete_char_buf((void*) data[2]);
+	delete_char_buf((void*) data[3]);
+}
+
+
+void call_sys_extattr_get_fd(void)
+{
+	printf("sys_extattr_get_fd\n");
+
+	data[0] = (uint64_t) get_fd();
+	data[1] = (uint64_t) get_uint32();
+	data[2] = (uint64_t) get_char_buf();
+	data[3] = (uint64_t) get_char_buf();
+	data[4] = (uint64_t) get_buf_size();
+
+	call_syscall(SYS_extattr_get_fd, data);
+
+
+	delete_char_buf((void*) data[2]);
+	delete_char_buf((void*) data[3]);
+}
+
+
+void call_sys_extattr_delete_fd(void)
+{
+	printf("sys_extattr_delete_fd\n");
+
+	data[0] = (uint64_t) get_fd();
+	data[1] = (uint64_t) get_uint32();
+	data[2] = (uint64_t) get_char_buf();
+
+	call_syscall(SYS_extattr_delete_fd, data);
+
+
+	delete_char_buf((void*) data[2]);
+}
+
+
+void call_sys_extattr_set_link(void)
+{
+	printf("sys_extattr_set_link\n");
+
+	data[0] = (uint64_t) get_char_buf();
+	data[1] = (uint64_t) get_uint32();
+	data[2] = (uint64_t) get_char_buf();
+	data[3] = (uint64_t) get_char_buf();
+	data[4] = (uint64_t) get_buf_size();
+
+	call_syscall(SYS_extattr_set_link, data);
+
+
+	delete_char_buf((void*) data[0]);
+	delete_char_buf((void*) data[2]);
+	delete_char_buf((void*) data[3]);
+}
+
+
+void call_sys_extattr_get_link(void)
+{
+	printf("sys_extattr_get_link\n");
+
+	data[0] = (uint64_t) get_char_buf();
+	data[1] = (uint64_t) get_uint32();
+	data[2] = (uint64_t) get_char_buf();
+	data[3] = (uint64_t) get_char_buf();
+	data[4] = (uint64_t) get_buf_size();
+
+	call_syscall(SYS_extattr_get_link, data);
+
+
+	delete_char_buf((void*) data[0]);
+	delete_char_buf((void*) data[2]);
+	delete_char_buf((void*) data[3]);
+}
+
+
+void call_sys_extattr_delete_link(void)
+{
+	printf("sys_extattr_delete_link\n");
+
+	data[0] = (uint64_t) get_char_buf();
+	data[1] = (uint64_t) get_uint32();
+	data[2] = (uint64_t) get_char_buf();
+
+	call_syscall(SYS_extattr_delete_link, data);
+
+
+	delete_char_buf((void*) data[0]);
+	delete_char_buf((void*) data[2]);
+}
+
+
+void call_sys_extattr_list_fd(void)
+{
+	printf("sys_extattr_list_fd\n");
+
+	data[0] = (uint64_t) get_fd();
+	data[1] = (uint64_t) get_uint32();
+	data[2] = (uint64_t) get_char_buf();
+	data[3] = (uint64_t) get_buf_size();
+
+	call_syscall(SYS_extattr_list_fd, data);
+
+
+	delete_char_buf((void*) data[2]);
+}
+
+
+void call_sys_extattr_list_file(void)
+{
+	printf("sys_extattr_list_file\n");
+
+	data[0] = (uint64_t) get_char_buf();
+	data[1] = (uint64_t) get_uint32();
+	data[2] = (uint64_t) get_char_buf();
+	data[3] = (uint64_t) get_buf_size();
+
+	call_syscall(SYS_extattr_list_file, data);
+
+
+	delete_char_buf((void*) data[0]);
+	delete_char_buf((void*) data[2]);
+}
+
+
+void call_sys_extattr_list_link(void)
+{
+	printf("sys_extattr_list_link\n");
+
+	data[0] = (uint64_t) get_char_buf();
+	data[1] = (uint64_t) get_uint32();
+	data[2] = (uint64_t) get_char_buf();
+	data[3] = (uint64_t) get_buf_size();
+
+	call_syscall(SYS_extattr_list_link, data);
+
+
+	delete_char_buf((void*) data[0]);
+	delete_char_buf((void*) data[2]);
+}
+
+
+void call_sys_pselect_old(void)
+{
+	printf("sys_pselect_old\n");
+
+	data[0] = (uint64_t) get_uint32();
+	data[1] = (uint64_t) get_fd_set();
+	data[2] = (uint64_t) get_fd_set();
+	data[3] = (uint64_t) get_fd_set();
+	data[4] = (uint64_t) get_timespec50();
+	data[5] = (uint64_t) get_sigset_t();
+
+	call_syscall(SYS_pselect_old, data);
+
+
+	delete_fd_set((void*) data[1]);
+	delete_fd_set((void*) data[2]);
+	delete_fd_set((void*) data[3]);
+	free((void*) data[4]);
+	free((void*) data[5]);
+}
+
+
+void call_sys_pollts_old(void)
+{
+	printf("sys_pollts_old\n");
+
+	data[0] = (uint64_t) get_pollfd();
+	data[1] = (uint64_t) get_uint32();
+	data[2] = (uint64_t) get_timespec50();
+	data[3] = (uint64_t) get_sigset_t();
+
+	call_syscall(SYS_pollts_old, data);
+
+
+	free((void*) data[0]);
+	free((void*) data[2]);
+	free((void*) data[3]);
+}
+
+
+void call_sys_setxattr(void)
+{
+	printf("sys_setxattr\n");
+
+	data[0] = (uint64_t) get_char_buf();
+	data[1] = (uint64_t) get_char_buf();
+	data[2] = (uint64_t) get_char_buf();
+	data[3] = (uint64_t) get_buf_size();
+	data[4] = (uint64_t) get_uint32();
+
+	call_syscall(SYS_setxattr, data);
+
+
+	delete_char_buf((void*) data[0]);
+	delete_char_buf((void*) data[1]);
+	delete_char_buf((void*) data[2]);
+}
+
+
+void call_sys_lsetxattr(void)
+{
+	printf("sys_lsetxattr\n");
+
+	data[0] = (uint64_t) get_char_buf();
+	data[1] = (uint64_t) get_char_buf();
+	data[2] = (uint64_t) get_char_buf();
+	data[3] = (uint64_t) get_buf_size();
+	data[4] = (uint64_t) get_uint32();
+
+	call_syscall(SYS_lsetxattr, data);
+
+
+	delete_char_buf((void*) data[0]);
+	delete_char_buf((void*) data[1]);
+	delete_char_buf((void*) data[2]);
+}
+
+
+void call_sys_fsetxattr(void)
+{
+	printf("sys_fsetxattr\n");
+
+	data[0] = (uint64_t) get_fd();
+	data[1] = (uint64_t) get_char_buf();
+	data[2] = (uint64_t) get_char_buf();
+	data[3] = (uint64_t) get_buf_size();
+	data[4] = (uint64_t) get_uint32();
+
+	call_syscall(SYS_fsetxattr, data);
+
+
+	delete_char_buf((void*) data[1]);
+	delete_char_buf((void*) data[2]);
+}
+
+
+void call_sys_getxattr(void)
+{
+	printf("sys_getxattr\n");
+
+	data[0] = (uint64_t) get_char_buf();
+	data[1] = (uint64_t) get_char_buf();
+	data[2] = (uint64_t) get_char_buf();
+	data[3] = (uint64_t) get_buf_size();
+
+	call_syscall(SYS_getxattr, data);
+
+
+	delete_char_buf((void*) data[0]);
+	delete_char_buf((void*) data[1]);
+	delete_char_buf((void*) data[2]);
+}
+
+
+void call_sys_lgetxattr(void)
+{
+	printf("sys_lgetxattr\n");
+
+	data[0] = (uint64_t) get_char_buf();
+	data[1] = (uint64_t) get_char_buf();
+	data[2] = (uint64_t) get_char_buf();
+	data[3] = (uint64_t) get_buf_size();
+
+	call_syscall(SYS_lgetxattr, data);
+
+
+	delete_char_buf((void*) data[0]);
+	delete_char_buf((void*) data[1]);
+	delete_char_buf((void*) data[2]);
+}
+
+
+void call_sys_fgetxattr(void)
+{
+	printf("sys_fgetxattr\n");
+
+	data[0] = (uint64_t) get_uint32();
+	data[1] = (uint64_t) get_char_buf();
+	data[2] = (uint64_t) get_char_buf();
+	data[3] = (uint64_t) get_buf_size();
+
+	call_syscall(SYS_fgetxattr, data);
+
+
+	delete_char_buf((void*) data[1]);
+	delete_char_buf((void*) data[2]);
+}
+
+
+void call_sys_listxattr(void)
+{
+	printf("sys_listxattr\n");
+
+	data[0] = (uint64_t) get_char_buf();
+	data[1] = (uint64_t) get_char_buf();
+	data[2] = (uint64_t) get_buf_size();
+
+	call_syscall(SYS_listxattr, data);
+
+
+	delete_char_buf((void*) data[0]);
+	delete_char_buf((void*) data[1]);
+}
+
+
+void call_sys_llistxattr(void)
+{
+	printf("sys_llistxattr\n");
+
+	data[0] = (uint64_t) get_char_buf();
+	data[1] = (uint64_t) get_char_buf();
+	data[2] = (uint64_t) get_buf_size();
+
+	call_syscall(SYS_llistxattr, data);
+
+
+	delete_char_buf((void*) data[0]);
+	delete_char_buf((void*) data[1]);
+}
+
+
+void call_sys_flistxattr(void)
+{
+	printf("sys_flistxattr\n");
+
+	data[0] = (uint64_t) get_fd();
+	data[1] = (uint64_t) get_char_buf();
+	data[2] = (uint64_t) get_buf_size();
+
+	call_syscall(SYS_flistxattr, data);
+
+
+	delete_char_buf((void*) data[1]);
+}
+
+
+void call_sys_removexattr(void)
+{
+	printf("sys_removexattr\n");
+
+	data[0] = (uint64_t) get_char_buf();
+	data[1] = (uint64_t) get_char_buf();
+
+	call_syscall(SYS_removexattr, data);
+
+
+	delete_char_buf((void*) data[0]);
+	delete_char_buf((void*) data[1]);
+}
+
+
+void call_sys_lremovexattr(void)
+{
+	printf("sys_lremovexattr\n");
+
+	data[0] = (uint64_t) get_char_buf();
+	data[1] = (uint64_t) get_char_buf();
+
+	call_syscall(SYS_lremovexattr, data);
+
+
+	delete_char_buf((void*) data[0]);
+	delete_char_buf((void*) data[1]);
+}
+
+
+void call_sys_fremovexattr(void)
+{
+	printf("sys_fremovexattr\n");
+
+	data[0] = (uint64_t) get_fd();
+	data[1] = (uint64_t) get_char_buf();
+
+	call_syscall(SYS_fremovexattr, data);
+
+
+	delete_char_buf((void*) data[1]);
+}
+
+
+void call_sys_stat_old(void)
+{
+	printf("sys_stat_old\n");
+
+	data[0] = (uint64_t) get_char_buf();
+	data[1] = (uint64_t) get_stat30();
+
+	call_syscall(SYS_stat_old, data);
+
+
+	delete_char_buf((void*) data[0]);
+	free((void*) data[1]);
+}
+
+
+void call_sys_fstat_old(void)
+{
+	printf("sys_fstat_old\n");
+
+	data[0] = (uint64_t) get_fd();
+	data[1] = (uint64_t) get_stat30();
+
+	call_syscall(SYS_fstat_old, data);
+
+
+	free((void*) data[1]);
+}
+
+
+void call_sys_lstat_old(void)
+{
+	printf("sys_lstat_old\n");
+
+	data[0] = (uint64_t) get_char_buf();
+	data[1] = (uint64_t) get_stat30();
+
+	call_syscall(SYS_lstat_old, data);
+
+
+	delete_char_buf((void*) data[0]);
+	free((void*) data[1]);
+}
+
+
+void call_sys_getdents(void)
+{
+	printf("sys_getdents\n");
+
+	data[0] = (uint64_t) get_fd();
+	data[1] = (uint64_t) get_char_buf();
+	data[2] = (uint64_t) get_buf_size();
+
+	call_syscall(SYS_getdents, data);
+
+
+	delete_char_buf((void*) data[1]);
+}
+
+
+void call_sys_socket(void)
+{
+	printf("sys_socket\n");
+
+	data[0] = (uint64_t) get_uint32();
+	data[1] = (uint64_t) get_uint32();
+	data[2] = (uint64_t) get_uint32();
+
+	call_syscall(SYS_socket, data);
+
+
+}
+
+
+void call_sys_getfh(void)
+{
+	printf("sys_getfh\n");
+
+	data[0] = (uint64_t) get_char_buf();
+	data[1] = (uint64_t) get_char_buf();
+	data[2] = (uint64_t) get_buf_size_ptr();
+
+	call_syscall(SYS_getfh, data);
+
+
+	delete_char_buf((void*) data[0]);
+	delete_char_buf((void*) data[1]);
+	free((void*) data[2]);
+}
+
+
+void call_sys_fhopen(void)
+{
+	printf("sys_fhopen\n");
+
+	data[0] = (uint64_t) get_char_buf();
+	data[1] = (uint64_t) get_buf_size();
+	data[2] = (uint64_t) get_uint32();
+
+	call_syscall(SYS_fhopen, data);
+
+
+	delete_char_buf((void*) data[0]);
+}
+
+
+void call_sys_fhstatvfs1(void)
+{
+	printf("sys_fhstatvfs1\n");
+
+	data[0] = (uint64_t) get_char_buf();
+	data[1] = (uint64_t) get_buf_size();
+	data[2] = (uint64_t) get_statvfs();
+	data[3] = (uint64_t) get_uint32();
+
+	call_syscall(SYS_fhstatvfs1, data);
+
+
+	delete_char_buf((void*) data[0]);
+	free((void*) data[2]);
+}
+
+
+void call_sys_fhstat_old(void)
+{
+	printf("sys_fhstat_old\n");
+
+	data[0] = (uint64_t) get_char_buf();
+	data[1] = (uint64_t) get_buf_size();
+	data[2] = (uint64_t) get_stat30();
+
+	call_syscall(SYS_fhstat_old, data);
+
+
+	delete_char_buf((void*) data[0]);
+	free((void*) data[2]);
+}
+
+
+void call_sys_aio_cancel(void)
+{
+	printf("sys_aio_cancel\n");
+
+	data[0] = (uint64_t) get_uint32();
+	data[1] = (uint64_t) get_aiocb();
+
+	call_syscall(SYS_aio_cancel, data);
+
+
+	delete_aiocb((void*) data[1]);
+}
+
+
+void call_sys_aio_error(void)
+{
+	printf("sys_aio_error\n");
+
+	data[0] = (uint64_t) get_aiocb();
+
+	call_syscall(SYS_aio_error, data);
+
+
+	delete_aiocb((void*) data[0]);
+}
+
+
+void call_sys_aio_fsync(void)
+{
+	printf("sys_aio_fsync\n");
+
+	data[0] = (uint64_t) get_uint32();
+	data[1] = (uint64_t) get_aiocb();
+
+	call_syscall(SYS_aio_fsync, data);
+
+
+	delete_aiocb((void*) data[1]);
+}
+
+
+void call_sys_aio_read(void)
+{
+	printf("sys_aio_read\n");
+
+	data[0] = (uint64_t) get_aiocb();
+
+	call_syscall(SYS_aio_read, data);
+
+
+	delete_aiocb((void*) data[0]);
+}
+
+
+void call_sys_aio_return(void)
+{
+	printf("sys_aio_return\n");
+
+	data[0] = (uint64_t) get_aiocb();
+
+	call_syscall(SYS_aio_return, data);
+
+
+	delete_aiocb((void*) data[0]);
+}
+
+
+void call_sys_aio_write(void)
+{
+	printf("sys_aio_write\n");
+
+	data[0] = (uint64_t) get_aiocb();
+
+	call_syscall(SYS_aio_write, data);
+
+
+	delete_aiocb((void*) data[0]);
+}
+
+
+void call_sys_mount(void)
+{
+	printf("sys_mount\n");
+
+	data[0] = (uint64_t) get_char_buf();
+	data[1] = (uint64_t) get_char_buf();
+	data[2] = (uint64_t) get_uint32();
+	data[3] = (uint64_t) get_char_buf();
+	data[4] = (uint64_t) get_uint64();
+
+	call_syscall(SYS_mount, data);
+
+
+	delete_char_buf((void*) data[0]);
+	delete_char_buf((void*) data[1]);
+	delete_char_buf((void*) data[3]);
+}
+
+
+void call_sys_posix_fadvise(void)
+{
+	printf("sys_posix_fadvise\n");
+
+	data[0] = (uint64_t) get_uint32();
+	data[1] = (uint64_t) get_uint32();
+	data[2] = (uint64_t) get_uint32();
+	data[3] = (uint64_t) get_uint32();
+	data[4] = (uint64_t) get_uint32();
+
+	call_syscall(SYS_posix_fadvise, data);
+
+
+}
+
+
+void call_sys_select(void)
+{
+	printf("sys_select\n");
+
+	data[0] = (uint64_t) get_uint32();
+	data[1] = (uint64_t) get_fd_set();
+	data[2] = (uint64_t) get_fd_set();
+	data[3] = (uint64_t) get_fd_set();
+	data[4] = (uint64_t) get_timeval();
+
+	call_syscall(SYS_select, data);
+
+
+	delete_fd_set((void*) data[1]);
+	delete_fd_set((void*) data[2]);
+	delete_fd_set((void*) data[3]);
+	free((void*) data[4]);
+}
+
+
+void call_sys_nanosleep(void)
+{
+	printf("sys_nanosleep\n");
+
+	data[0] = (uint64_t) get_timespec();
+	data[1] = (uint64_t) get_timespec();
+
+	call_syscall(SYS_nanosleep, data);
+
+
+	free((void*) data[0]);
+	free((void*) data[1]);
+}
+
+
+void call_sys_kevent(void)
+{
+	printf("sys_kevent\n");
+
+	data[0] = (uint64_t) get_uint32();
+	data[1] = (uint64_t) get_kevent();
+	data[2] = (uint64_t) get_kevent_size();
+	data[3] = (uint64_t) get_kevent();
+	data[4] = (uint64_t) get_kevent_size();
+	data[5] = (uint64_t) get_timespec();
+
+	call_syscall(SYS_kevent, data);
+
+
+	free((void*) data[1]);
+	free((void*) data[3]);
+	free((void*) data[5]);
+}
+
+
+void call_sys_pselect(void)
+{
+	printf("sys_pselect\n");
+
+	data[0] = (uint64_t) get_uint32();
+	data[1] = (uint64_t) get_fd_set();
+	data[2] = (uint64_t) get_fd_set();
+	data[3] = (uint64_t) get_fd_set();
+	data[4] = (uint64_t) get_timespec();
+	data[5] = (uint64_t) get_sigset_t();
+
+	call_syscall(SYS_pselect, data);
+
+
+	delete_fd_set((void*) data[1]);
+	delete_fd_set((void*) data[2]);
+	delete_fd_set((void*) data[3]);
+	free((void*) data[4]);
+	free((void*) data[5]);
+}
+
+
+void call_sys_pollts(void)
+{
+	printf("sys_pollts\n");
+
+	data[0] = (uint64_t) get_pollfd();
+	data[1] = (uint64_t) get_uint32();
+	data[2] = (uint64_t) get_timespec();
+	data[3] = (uint64_t) get_sigset_t();
+
+	call_syscall(SYS_pollts, data);
+
+
+	free((void*) data[0]);
+	free((void*) data[2]);
+	free((void*) data[3]);
+}
+
+
+void call_sys_aio_suspend(void)
+{
+	printf("sys_aio_suspend\n");
+
+	data[0] = (uint64_t) get_aiocb();
+	data[1] = (uint64_t) get_uint32();
+	data[2] = (uint64_t) get_timespec();
+
+	call_syscall(SYS_aio_suspend, data);
+
+
+	delete_aiocb((void*) data[0]);
+	free((void*) data[2]);
+}
+
+
+void call_sys_stat(void)
+{
+	printf("sys_stat\n");
+
+	data[0] = (uint64_t) get_char_buf();
+	data[1] = (uint64_t) get_stat();
+
+	call_syscall(SYS_stat, data);
+
+
+	delete_char_buf((void*) data[0]);
+	free((void*) data[1]);
+}
+
+
+void call_sys_fstat(void)
+{
+	printf("sys_fstat\n");
+
+	data[0] = (uint64_t) get_uint32();
+	data[1] = (uint64_t) get_stat();
+
+	call_syscall(SYS_fstat, data);
+
+
+	free((void*) data[1]);
+}
+
+
+void call_sys_lstat(void)
+{
+	printf("sys_lstat\n");
+
+	data[0] = (uint64_t) get_char_buf();
+	data[1] = (uint64_t) get_stat();
+
+	call_syscall(SYS_lstat, data);
+
+
+	delete_char_buf((void*) data[0]);
+	free((void*) data[1]);
+}
+
+
+void call_sys_mknod(void)
+{
+	printf("sys_mknod\n");
+
+	data[0] = (uint64_t) get_char_buf();
+	data[1] = (uint64_t) get_uint32();
+	data[2] = (uint64_t) get_uint64();
+
+	call_syscall(SYS_mknod, data);
+
+
+	delete_char_buf((void*) data[0]);
+}
+
+
+void call_sys_fhstat(void)
+{
+	printf("sys_fhstat\n");
+
+	data[0] = (uint64_t) get_char_buf();
+	data[1] = (uint64_t) get_buf_size();
+	data[2] = (uint64_t) get_stat();
+
+	call_syscall(SYS_fhstat, data);
+
+
+	delete_char_buf((void*) data[0]);
+	free((void*) data[2]);
+}
+
+
+void call_sys_pipe2(void)
+{
+	printf("sys_pipe2\n");
+
+	data[0] = (uint64_t) get_ptr_uint64();
+	data[1] = (uint64_t) get_uint32();
+
+	call_syscall(SYS_pipe2, data);
+
+
+	free((void*) data[0]);
+}
+
+
+void call_sys_dup3(void)
+{
+	printf("sys_dup3\n");
+
+	data[0] = (uint64_t) get_uint32();
+	data[1] = (uint64_t) get_uint32();
+	data[2] = (uint64_t) get_uint32();
+
+	call_syscall(SYS_dup3, data);
+
+
+}
+
+
+void call_sys_kqueue1(void)
+{
+	printf("sys_kqueue1\n");
+
+	data[0] = (uint64_t) get_uint32();
+
+	call_syscall(SYS_kqueue1, data);
+
+
+}
+
+
+void call_sys_paccept(void)
+{
+	printf("sys_paccept\n");
+
+	data[0] = (uint64_t) get_uint32();
+	data[1] = (uint64_t) get_sockaddr();
+	data[2] = (uint64_t) get_ptr_sockaddr_size();
+	data[3] = (uint64_t) get_sigset_t();
+	data[4] = (uint64_t) get_uint32();
+
+	call_syscall(SYS_paccept, data);
+
+
+	delete_sockaddr((void*) data[1]);
+	free((void*) data[2]);
+	free((void*) data[3]);
+}
+
+
+void call_sys_linkat(void)
+{
+	printf("sys_linkat\n");
+
+	data[0] = (uint64_t) get_uint32();
+	data[1] = (uint64_t) get_char_buf();
+	data[2] = (uint64_t) get_uint32();
+	data[3] = (uint64_t) get_char_buf();
+	data[4] = (uint64_t) get_uint32();
+
+	call_syscall(SYS_linkat, data);
+
+
+	delete_char_buf((void*) data[1]);
+	delete_char_buf((void*) data[3]);
+}
+
+
+void call_sys_renameat(void)
+{
+	printf("sys_renameat\n");
+
+	data[0] = (uint64_t) get_uint32();
+	data[1] = (uint64_t) get_char_buf();
+	data[2] = (uint64_t) get_uint32();
+	data[3] = (uint64_t) get_char_buf();
+
+	call_syscall(SYS_renameat, data);
+
+
+	delete_char_buf((void*) data[1]);
+	delete_char_buf((void*) data[3]);
+}
+
+
+void call_sys_mkfifoat(void)
+{
+	printf("sys_mkfifoat\n");
+
+	data[0] = (uint64_t) get_uint32();
+	data[1] = (uint64_t) get_char_buf();
+	data[2] = (uint64_t) get_uint32();
+
+	call_syscall(SYS_mkfifoat, data);
+
+
+	delete_char_buf((void*) data[1]);
+}
+
+
+void call_sys_mknodat(void)
+{
+	printf("sys_mknodat\n");
+
+	data[0] = (uint64_t) get_uint32();
+	data[1] = (uint64_t) get_char_buf();
+	data[2] = (uint64_t) get_uint32();
+	data[3] = (uint64_t) get_uint32();
+	data[4] = (uint64_t) get_uint64();
+
+	call_syscall(SYS_mknodat, data);
+
+
+	delete_char_buf((void*) data[1]);
+}
+
+
+void call_sys_mkdirat(void)
+{
+	printf("sys_mkdirat\n");
+
+	data[0] = (uint64_t) get_uint32();
+	data[1] = (uint64_t) get_char_buf();
+	data[2] = (uint64_t) get_uint32();
+
+	call_syscall(SYS_mkdirat, data);
+
+
+	delete_char_buf((void*) data[1]);
+}
+
+
+void call_sys_faccessat(void)
+{
+	printf("sys_faccessat\n");
+
+	data[0] = (uint64_t) get_uint32();
+	data[1] = (uint64_t) get_char_buf();
+	data[2] = (uint64_t) get_uint32();
+	data[3] = (uint64_t) get_uint32();
+
+	call_syscall(SYS_faccessat, data);
+
+
+	delete_char_buf((void*) data[1]);
+}
+
+
+void call_sys_fchmodat(void)
+{
+	printf("sys_fchmodat\n");
+
+	data[0] = (uint64_t) get_uint32();
+	data[1] = (uint64_t) get_char_buf();
+	data[2] = (uint64_t) get_uint32();
+	data[3] = (uint64_t) get_uint32();
+
+	call_syscall(SYS_fchmodat, data);
+
+
+	delete_char_buf((void*) data[1]);
+}
+
+
+void call_sys_fchownat(void)
+{
+	printf("sys_fchownat\n");
+
+	data[0] = (uint64_t) get_uint32();
+	data[1] = (uint64_t) get_char_buf();
+	data[2] = (uint64_t) get_uid();
+	data[3] = (uint64_t) get_gid();
+	data[4] = (uint64_t) get_uint32();
+
+	call_syscall(SYS_fchownat, data);
+
+
+	delete_char_buf((void*) data[1]);
+}
+
+
+void call_sys_fstatat(void)
+{
+	printf("sys_fstatat\n");
+
+	data[0] = (uint64_t) get_uint32();
+	data[1] = (uint64_t) get_char_buf();
+	data[2] = (uint64_t) get_stat();
+	data[3] = (uint64_t) get_uint32();
+
+	call_syscall(SYS_fstatat, data);
+
+
+	delete_char_buf((void*) data[1]);
+	free((void*) data[2]);
+}
+
+
+void call_sys_openat(void)
+{
+	printf("sys_openat\n");
+
+	data[0] = (uint64_t) get_uint32();
+	data[1] = (uint64_t) get_char_buf();
+	data[2] = (uint64_t) get_uint32();
+	data[3] = (uint64_t) get_uint32();
+
+	call_syscall(SYS_openat, data);
+
+
+	delete_char_buf((void*) data[1]);
+}
+
+
+void call_sys_readlinkat(void)
+{
+	printf("sys_readlinkat\n");
+
+	data[0] = (uint64_t) get_uint32();
+	data[1] = (uint64_t) get_char_buf();
+	data[2] = (uint64_t) get_char_buf();
+	data[3] = (uint64_t) get_buf_size();
+
+	call_syscall(SYS_readlinkat, data);
+
+
+	delete_char_buf((void*) data[1]);
+	delete_char_buf((void*) data[2]);
+}
+
+
+void call_sys_symlinkat(void)
+{
+	printf("sys_symlinkat\n");
+
+	data[0] = (uint64_t) get_char_buf();
+	data[1] = (uint64_t) get_uint32();
+	data[2] = (uint64_t) get_char_buf();
+
+	call_syscall(SYS_symlinkat, data);
+
+
+	delete_char_buf((void*) data[0]);
+	delete_char_buf((void*) data[2]);
+}
+
+
+void call_sys_unlinkat(void)
+{
+	printf("sys_unlinkat\n");
+
+	data[0] = (uint64_t) get_uint32();
+	data[1] = (uint64_t) get_char_buf();
+	data[2] = (uint64_t) get_uint32();
+
+	call_syscall(SYS_unlinkat, data);
+
+
+	delete_char_buf((void*) data[1]);
+}
+
+
+void call_sys_posix_fallocate(void)
+{
+	printf("sys_posix_fallocate\n");
+
+	data[0] = (uint64_t) get_uint32();
+	data[1] = (uint64_t) get_uint32();
+	data[2] = (uint64_t) get_uint32();
+	data[3] = (uint64_t) get_uint32();
+
+	call_syscall(SYS_posix_fallocate, data);
+
+
+}
+
+
+void call_sys_fdiscard(void)
+{
+	printf("sys_fdiscard\n");
+
+	data[0] = (uint64_t) get_uint32();
+	data[1] = (uint64_t) get_uint32();
+	data[2] = (uint64_t) get_uint32();
+	data[3] = (uint64_t) get_uint32();
+
+	call_syscall(SYS_fdiscard, data);
+
+
+}
+
+
