@@ -145,7 +145,7 @@ RUMPCOMP_USER_WARNFLAGS+=	-Wstrict-prototypes -Wmissing-prototypes
 DESTDIR=/
 .endif
 BUILDRUMP_CPPFLAGS ?= -isysroot ${DESTDIR}
-RUMPCOMP_USER_WERROR = ${${_NOWERROR} == "no" :?-Werror:}
+RUMPCOMP_USER_WERROR = 
 .for rcusrc in ${RUMPCOMP_USER_SRCS:R}
 ${rcusrc}.d: ${rcusrc}.c
 	${_MKTARGET_CREATE}

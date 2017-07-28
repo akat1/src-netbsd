@@ -4095,7 +4095,7 @@ fi
 
 
 SAVE_CFLAGS="${CFLAGS}"
-CFLAGS="${SAVE_CFLAGS} -Werror"
+CFLAGS="${SAVE_CFLAGS} -Wall"
 
 for ac_header in sys/cdefs.h
 do :

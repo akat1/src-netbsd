@@ -9,7 +9,7 @@ NOMAN=		installed by ../rump_allserver
 
 CPPFLAGS+=	-D_KERNTYPES
 LDADD+=		-Wl,--whole-archive -lrumpkern_sysproxy -lrump \
-		-lrumpuser -Wl,--no-whole-archive -lrt -pthread -lasan
-#		-lrumpuser -Wl,--no-whole-archive -lrt -pthread -ltsan
+		-lrumpuser -Wl,--no-whole-archive -lrt -pthread
+#		-lrumpuser -Wl,--no-whole-archive -lrt -pthread
 
 .include <bsd.prog.mk>

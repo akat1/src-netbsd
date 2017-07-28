@@ -33,7 +33,6 @@ else
   EQN="eqn -Tascii"
   ROFF="groff -ww -Tascii -P -c"
 fi
-MOPT="-Werror $MOPT"
 
 while [ -n "$1" ]; do
   file=$1

@@ -45,7 +45,7 @@ SRCS	= nsp.c n8_API_Initialize.c config.c n8_manage_memory.c n8_sksInit.c n8_mem
 KLDMOD	= t
 MKMAN	= no
 
-CPPFLAGS  += -Werror -Wall -Wmissing-prototypes -Wstrict-prototypes -Wswitch -Wshadow -Wcast-qual -Wwrite-strings -Wno-sign-compare -Wno-pointer-sign -Wno-attributes -Wextra -Wno-unused-parameter -I. -I./common -I./QMgr -I./include_private -I./include_public -I./common/api -I./common/api/commands -DKOFF -DKERNEL -DMULTIPROCESSOR -DMAX_NSP_INSTANCES=1 -DSUPPORT_CALLBACKS
+CPPFLAGS  += -Wall -Wmissing-prototypes -Wstrict-prototypes -Wswitch -Wshadow -Wcast-qual -Wwrite-strings -Wno-sign-compare -Wno-pointer-sign -Wno-attributes -Wextra -Wno-unused-parameter -I. -I./common -I./QMgr -I./include_private -I./include_public -I./common/api -I./common/api/commands -DKOFF -DKERNEL -DMULTIPROCESSOR -DMAX_NSP_INSTANCES=1 -DSUPPORT_CALLBACKS
 #CPPFLAGS += -DN8DEBUG
 
 .PATH: ./common ./memory ./QMgr ./common/api ./common/api/commands

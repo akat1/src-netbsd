@@ -318,19 +318,19 @@ $(OBJDIR)/prparserparse.c $(OBJDIR)/prparser.y.h :       $(ASL_COMPILER)/prparse
 # by the utilities above and they are not necessarily ANSI C, etc.
 #
 $(OBJDIR)/aslcompilerlex.o :   $(OBJDIR)/aslcompilerlex.c
-	$(CC) -c $(CFLAGS) -Wall -Werror -o$@ $<
+	$(CC) -c $(CFLAGS) -Wall -o$@ $<
 
 $(OBJDIR)/aslcompilerparse.o : $(OBJDIR)/aslcompilerparse.c
-	$(CC) -c $(CFLAGS) -Wall -Werror -o$@ $<
+	$(CC) -c $(CFLAGS) -Wall -o$@ $<
 
 $(OBJDIR)/dtparserlex.o :      $(OBJDIR)/dtparserlex.c
-	$(CC) -c $(CFLAGS) -Wall -Werror -o$@ $<
+	$(CC) -c $(CFLAGS) -Wall -o$@ $<
 
 $(OBJDIR)/dtparserparse.o :    $(OBJDIR)/dtparserparse.c
-	$(CC) -c $(CFLAGS) -Wall -Werror -o$@ $<
+	$(CC) -c $(CFLAGS) -Wall -o$@ $<
 
 $(OBJDIR)/prparserlex.o :      $(OBJDIR)/prparserlex.c
-	$(CC) -c $(CFLAGS) -Wall -Werror -o$@ $<
+	$(CC) -c $(CFLAGS) -Wall -o$@ $<
 
 $(OBJDIR)/prparserparse.o :    $(OBJDIR)/prparserparse.c
-	$(CC) -c $(CFLAGS) -Wall -Werror -o$@ $<
+	$(CC) -c $(CFLAGS) -Wall -o$@ $<

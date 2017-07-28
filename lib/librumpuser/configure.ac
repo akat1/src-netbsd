@@ -51,7 +51,7 @@ dnl
 dnl pthread_setname() sillyness is a bit longer; we need the signature
 dnl
 SAVE_CFLAGS="${CFLAGS}"
-CFLAGS="${SAVE_CFLAGS} -Werror"
+CFLAGS="${SAVE_CFLAGS}"
 
 dnl check sys/cdefs.h creatively to process only with cc, not cpp
 dnl (sys/cdefs.h in at least in musl contains a #warning)

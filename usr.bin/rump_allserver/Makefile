@@ -13,7 +13,7 @@ CPPFLAGS+=	-D_KERNTYPES
 .include "${RUMPTOP}/net/Makefile.rumpnetcomp"
 
 LDADD+=	${RUMPDEVLDADD} ${RUMPFSLDADD} ${RUMPKERNLDADD} ${RUMPNETLDADD}
-LDADD+= -lrumpdev -lrumpvfs -lrumpnet -lrump -lrumpuser -lrt -pthread -lasan
-#LDADD+= -lrumpdev -lrumpvfs -lrumpnet -lrump -lrumpuser -lrt -pthread -ltsan
+LDADD+= -lrumpdev -lrumpvfs -lrumpnet -lrump -lrumpuser -lrt -pthread
+#LDADD+= -lrumpdev -lrumpvfs -lrumpnet -lrump -lrumpuser -lrt -pthread
 
 .include <bsd.prog.mk>
